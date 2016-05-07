@@ -9,7 +9,7 @@
 namespace app\gen;
 
 use yii\base\Exception;
-use yii\helpers\ArrayHelper;
+use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
 
 /**
@@ -18,6 +18,8 @@ use yii\helpers\FileHelper;
  */
 class ModuleManager
 {
+    const MAX_CALL_DEPTH = 1024;
+
     /**
      * @param $module_id string
      * @return bool
@@ -89,18 +91,29 @@ class ModuleManager
      * @param bool|true $returnAlias
      * @return string
      */
-    public static function getModuleMigrationsRootPath($modules_id, $returnAlias = true)
+    public static function getModuleMigrationRootPath($modules_id, $returnAlias = true)
     {
-        return self::getModuleRootPath($modules_id, $returnAlias) . DIRECTORY_SEPARATOR .'migrations';
+        return self::getModuleRootPath($modules_id, $returnAlias) . DIRECTORY_SEPARATOR . 'migrations';
+    }
+
+    /**
+     * @param $modules_id
+     * @return string
+     */
+    public static function getModuleMigrationTableName($modules_id)
+    {
+        return "{{%migration_{$modules_id}}}";
     }
 
     /**
      * @param $module_id
      * @return bool
      */
-    public static function hasMigrationFiles($module_id){
-        $files = FileHelper::findFiles(self::getModuleMigrationsRootPath($module_id,false));
-        return count($files) > 0;
+    public static function hasMigrationFiles($module_id)
+    {
+        $path = self::getModuleMigrationRootPath($module_id, false);
+        if(!file_exists($path)) return false;
+        return count(FileHelper::findFiles($path)) > 0;
     }
 
     /**
@@ -111,11 +124,8 @@ class ModuleManager
     public static function loadModuleExternalFileContent($module_id)
     {
         $path = self::getModuleExternalFilePath($module_id, false);
-        if (!file_exists($path)) {
-            throw new Exception("ERR: $path is not exist!");
-        }
-        $content = require($path);
-        return $content;
+        if (!file_exists($path)) throw new Exception("ERR: $path is not exist!");
+        return require($path);
     }
 
     /**
@@ -124,10 +134,7 @@ class ModuleManager
      */
     public static function getModuleInfo($module_id)
     {
-        if (self::isModuleExist($module_id)) {
-            return new ModuleInfo(self::loadModuleExternalFileContent($module_id));
-        }
-        return null;
+        return self::isModuleExist($module_id) ? new ModuleInfo(self::loadModuleExternalFileContent($module_id)):null;
     }
 
 
@@ -136,26 +143,69 @@ class ModuleManager
      */
     public static function getModuleList()
     {
-        $list = self::listDir(self::getModulesRootPath(false));
-        return $list;
+        return self::getSubDirectories(self::getModulesRootPath(false));
+    }
+
+    /**
+     * @return array A element of the array is the module ID.
+     */
+    public static function getModuleListByDependencyOrder()
+    {
+        $orderedList = [];
+        $moduleList = self::getModuleList();
+        $put = function ($m_id) use (&$put, &$orderedList, $moduleList) {
+            static $i = 0;
+            if ($i++ > self::MAX_CALL_DEPTH)
+                throw new InvalidConfigException("The 'dependencies' config of modules may have dead cycle!");
+
+            if (array_key_exists($m_id, $orderedList)) return;
+
+            $deps = self::getModuleInfo($m_id)->specifications['dependencies'];
+            foreach ($deps as $d) {
+                $put($d);
+            }
+            array_push($orderedList, $m_id);
+        };
+
+        foreach ($moduleList as $module_id) {
+            $put($module_id);
+        }
+        return $orderedList;
+    }
+
+    /**
+     * @param bool|true $returnAlias
+     * @return string
+     */
+    public static function getTransferStationPath($returnAlias = true)
+    {
+        $pathAlias = '@app/runtime/module_transfer_station';
+        $path = \Yii::getAlias($pathAlias);
+        if (!file_exists($path)) FileHelper::createDirectory($path);
+        return $returnAlias ? $pathAlias : $path;
+    }
+
+    /**
+     * @param $module_id
+     * @return bool
+     */
+    public static function isModuleExistInTransferStation($module_id)
+    {
+        return file_exists(self::getTransferStationPath(false) . DIRECTORY_SEPARATOR . $module_id);
     }
 
     /**
      * @param $directory string
      * @return array
      */
-    protected static function listDir($directory)
+    protected static function getSubDirectories($directory)
     {
-        $dirs = array();
+        $dirs = [];
         $dir = dir($directory);
         while ($file = $dir->read()) {
-            if ((is_dir("$directory/$file")) AND ($file != ".") AND ($file != "..")) {
-                array_push($dirs, $file);
-            }
+            if ((is_dir("$directory/$file")) AND ($file != ".") AND ($file != "..")) array_push($dirs, $file);
         }
         $dir->close();
         return $dirs;
     }
-
-
 } // end of class definition

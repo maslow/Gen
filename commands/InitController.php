@@ -24,32 +24,24 @@ class InitController extends Controller
      *
      * ```
      * @param string $env 'dev' for development environment or 'prod' for production environment
+     * @return bool|int
      */
     public function actionIndex($env = 'dev')
     {
-        $envRoot = \Yii::getAlias('@app/environments');
-        $indexDev = $envRoot . '/index-dev.php';
-        $indexProd = $envRoot . '/index-prod.php';
-        $dbExample = $envRoot . '/db-example.php';
+        if ($env !== 'dev' && $env !== 'prod') return $this->stderr("ERROR: {$env} is invalid.");
 
-        $configRoot = \Yii::getAlias('@app/config');
-        $dbFile = $configRoot . '/db.php';
+        $tplIndexPath = \Yii::getAlias("@app/environments/index-{$env}.php");
+        $tplDBPath = \Yii::getAlias("@app/environments/db-{$env}.php");
 
-        $webroot = \Yii::getAlias('@app/web');
-        $index = $webroot . '/index.php';
+        $targetDBPath = \Yii::getAlias('@app/config/db.php');
+        $targetIndexPath = \Yii::getAlias('@app/web/index.php');
 
-        echo "Clearing environments...";
-        file_exists($index) ? unlink($index) : print('x..');
-        echo "done!\n";
+        file_exists($targetIndexPath) ? unlink($targetIndexPath) : null;
 
-        if (!file_exists($dbFile)) {
-            file_put_contents($dbFile, file_get_contents($dbExample)) ? print($dbFile . "\n") : print("error!");
-        }
+        if (!file_exists($targetDBPath) && !file_put_contents($targetDBPath, file_get_contents($tplDBPath)))
+            return $this->stderr("ERROR: Generating {$targetDBPath} failed.");
 
-        if ($env == 'dev') {
-            file_put_contents($index, file_get_contents($indexDev)) ? print($index . " to Dev Evn. \n") : print('error!');
-        } else {
-            file_put_contents($index, file_get_contents($indexProd)) ? print($index . " to Prod Evn. \n") : print('error!');
-        }
+        if(!file_put_contents($targetIndexPath, file_get_contents($tplIndexPath)))
+            return $this->stderr("ERROR: Generating {$targetIndexPath} failed.");
     }
 }

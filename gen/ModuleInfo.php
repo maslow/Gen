@@ -67,21 +67,12 @@ class ModuleInfo
      */
     public static function validateRawInfo($rawInfo)
     {
-        if(!isset($rawInfo['id'])){
-            return false;
-        }
-        if(!isset($rawInfo['specifications'])){
-            return false;
-        }
-        if(!isset($rawInfo['permissions'])){
-            return false;
-        }
-        if(!isset($rawInfo['navigation'])){
-            return false;
-        }
-        if(!isset($rawInfo['handlers'])){
-            return false;
-        }
+        if(!isset($rawInfo['id'])) return false;
+        if(!isset($rawInfo['specifications'])) return false;
+        if(!isset($rawInfo['permissions'])) return false;
+        if(!isset($rawInfo['navigation'])) return false;
+        if(!isset($rawInfo['handlers'])) return false;
+
         return true;
     }
 
@@ -129,5 +120,4 @@ class ModuleInfo
     {
         return $rawInfo['handlers'];
     }
-
 }// end of class definition
