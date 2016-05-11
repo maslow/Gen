@@ -112,7 +112,7 @@ class ModuleManager
     public static function hasMigrationFiles($module_id)
     {
         $path = self::getModuleMigrationRootPath($module_id, false);
-        if(!file_exists($path)) return false;
+        if (!file_exists($path)) return false;
         return count(FileHelper::findFiles($path)) > 0;
     }
 
@@ -134,7 +134,7 @@ class ModuleManager
      */
     public static function getModuleInfo($module_id)
     {
-        return self::isModuleExist($module_id) ? new ModuleInfo(self::loadModuleExternalFileContent($module_id)):null;
+        return self::isModuleExist($module_id) ? new ModuleInfo(self::loadModuleExternalFileContent($module_id)) : null;
     }
 
 
@@ -180,9 +180,17 @@ class ModuleManager
     public static function getTransferStationPath($returnAlias = true)
     {
         $pathAlias = '@app/runtime/module_transfer_station';
-        $path = \Yii::getAlias($pathAlias);
-        if (!file_exists($path)) FileHelper::createDirectory($path);
-        return $returnAlias ? $pathAlias : $path;
+        return $returnAlias ? $pathAlias : \Yii::getAlias($pathAlias);
+    }
+
+    /**
+     * @param $module_id
+     * @param bool|true $returnAlias
+     * @return string
+     */
+    public static function getModulePathInTransferStation($module_id, $returnAlias = true)
+    {
+        return self::getTransferStationPath($returnAlias) . DIRECTORY_SEPARATOR . $module_id;
     }
 
     /**

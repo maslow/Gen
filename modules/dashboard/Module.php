@@ -11,5 +11,48 @@ namespace app\modules\dashboard;
 
 class Module extends \yii\base\Module
 {
+    const EVENT_BEFORE_LOGIN = 'beforeLogin';
+    const EVENT_LOGIN_FAIL = 'loginFail';
+    const EVENT_LOGIN_SUCCESS = 'loginSuccess';
 
+    const EVENT_BEFORE_LOGOUT = 'beforeLogout';
+    const EVENT_AFTER_LOGOUT = 'afterLogout';
+
+    const EVENT_LOGIN_REQUIRED = 'loginRequired';
+
+    const EVENT_PERMISSION_REQUIRED = 'permissionRequired';
+
+    const EVENT_CREATE_MANAGER_SUCCESS = "createManagerSuccess";
+    const EVENT_CREATE_MANAGER_FAIL = "createManagerFail";
+
+    const EVENT_UPDATE_MANAGER_SUCCESS = "updateManagerSuccess";
+    const EVENT_UPDATE_MANAGER_FAIL = "updateManagerFail";
+
+    const EVENT_DELETE_MANAGER_SUCCESS = "deleteManagerSuccess";
+    const EVENT_DELETE_MANAGER_FAIL = "deleteManagerFail";
+
+    const EVENT_RESET_PASSWORD_SUCCESS = "resetPasswordSuccess";
+    const EVENT_RESET_PASSWORD_FAIL = "resetPasswordSuccess";
+
+    public $defaultRoute = 'main';
+
+    public function init()
+    {
+        parent::init();
+        \Yii::$app->set('administrator', [
+            'class' => '\yii\web\User',
+            'identityClass' => 'app\modules\dashboard\models\Administrator' ,
+            'enableAutoLogin' => false,
+            'idParam' => "__{$this->id}__id",
+            'identityCookie' => [
+                'name' => "__{$this->id}__identity",
+                'httpOnly' => true
+            ],
+        ]);
+        \Yii::$app->i18n->translations['dashboard'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@app/modules/dashboard/messages',
+        ];
+    }
 }

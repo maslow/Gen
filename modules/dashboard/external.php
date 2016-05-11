@@ -19,25 +19,13 @@ return [
 
     // Mark: Permissions exported
     'permissions' => [
-        'administrator.list' => [
-            'name' => 'Administrator List',
-            'description' => 'Determine whether you can browser the administrator list.'
-        ],
-        'administrator.update' => [
-            'name' => 'Update Administrator',
-            'description' => 'Something goes here.'
-        ],
-        'administrator.delete' => [
-            'name' => 'Delete Administrator',
-            'description' => 'Something goes here.'
-        ]
     ],
 
     // Mark: Navigation configuration
     'navigation' => [
         'Administrators' => [
             'Administrator List' => [
-                'url' => '/dashboard/administrator/list',
+                'route' => 'administrator/list',
                 'bind-permission' => [
                     'administrator.list',
                     'administrator.update',
@@ -45,15 +33,14 @@ return [
                 ],
             ],
             'Create Administrator' => [
-                'url' => '/dashboard/administrator/create',
+                'route' => 'administrator/create',
                 'bind-permission' => 'administrator.create',
             ],
             'Reset Password' => [
-                'url' => '/dashboard/administrator/reset-password',
+                'route' => 'administrator/reset-password',
                 'bind-permission' => 'administrator.reset-password',
-            ],
-            'Welcome Test Page' => '/dashboard/administrator/welcome'
-        ]
+            ]
+        ],
     ],
 
     // Mark: handlers

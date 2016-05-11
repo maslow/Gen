@@ -27,6 +27,12 @@ class ModuleBaseController extends Controller
      */
     public function actionInstall($module_id)
     {
+        try{
+            $this->createModuleTransferStation();
+        }catch (\Exception $e){
+            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
+        };
+
         if (!ModuleManager::isModuleExistInTransferStation($module_id))
             return $this->stderr("ERROR: Module {$module_id} is not found!\n");
 
@@ -35,7 +41,7 @@ class ModuleBaseController extends Controller
 
         try {
             FileHelper::copyDirectory(
-                ModuleManager::getTransferStationPath(false) . DIRECTORY_SEPARATOR . $module_id,
+                ModuleManager::getModulePathInTransferStation($module_id,false),
                 ModuleManager::getModuleRootPath($module_id, false)
             );
 
@@ -68,6 +74,8 @@ class ModuleBaseController extends Controller
      */
     public function actionRemove($module_id)
     {
+        $this->createModuleTransferStation();
+
         if (!ModuleManager::isModuleExist($module_id))
             return $this->stderr("ERROR: Module {$module_id} is not installed!\n");
 
@@ -127,5 +135,13 @@ class ModuleBaseController extends Controller
     private function removePermissions($permissions)
     {
 
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function createModuleTransferStation(){
+        if(!file_exists(ModuleManager::getTransferStationPath(false)))
+            FileHelper::createDirectory(ModuleManager::getTransferStationPath(false));
     }
 }
