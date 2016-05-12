@@ -1,7 +1,7 @@
 INTRODUCTION
 ============
 
-Gen - Developed based Yii Framework 2.
+Gen - Developed based Yii Framework 2.0
 
 
 REQUIREMENT
@@ -19,7 +19,7 @@ git clone https://github.com/Maslow/Gen.git
 CONFIGURATION
 -------------
 
-### Initialize
+### Initialize project
 
 1、In the root path of your project , enter the commands:
   
@@ -58,7 +58,7 @@ return [
 ### Install and Update the modules
 
 ```command
-php yii module/update
+php yii module/update-all
 ```
 
 OTHERWISE

@@ -31,7 +31,7 @@ class MainController extends Controller
             return $this->redirect(['main/login']);
         }
 
-        return $this->render('index', ['navigationList' => $this->generateNavigationList()]);
+        return $this->render('index', ['navigationList' => $this->getNavigationList()]);
     }
 
     /**
@@ -73,7 +73,7 @@ class MainController extends Controller
     /**
      * @return array
      */
-    private function generateNavigationList()
+    private function getNavigationList()
     {
         $modules = ModuleManager::getModuleList();
         $navigationList = [];
@@ -82,19 +82,25 @@ class MainController extends Controller
             if (!isset($moduleInfo->navigation) || !is_array($moduleInfo->navigation))
                 continue;
             foreach ($moduleInfo->navigation as $key => $subNavs) {
-                foreach ($subNavs as $k => $subNav) {
-                    if (is_string($subNavs[$k])) {
-                        $subNavs[$k] =[
-                            'url' =>["/{$module_id}" . $subNav],
-                            'route' => $subNav
-                        ];
-                    }else {
-                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav['route']];
-                    }
-                }
-                $navigationList[$key] = $subNavs;
+                $this->filterNavigation($subNavs);
+                if (count($subNavs))
+                    $navigationList[$key] = $subNavs;
             }
         }
         return $navigationList;
+    }
+
+    /**
+     * @param $subNavs
+     */
+    private function filterNavigation(&$subNavs)
+    {
+        foreach ($subNavs as $label => $item) {
+            $can = false;
+            foreach ($item['bind-permission'] as $i => $p)
+                $can = $can || \Yii::$app->administrator->can($p);
+
+            if (!$can && !empty($item['bind-permission'])) unset($subNavs[$label]);
+        }
     }
 }

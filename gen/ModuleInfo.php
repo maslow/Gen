@@ -31,7 +31,7 @@ class ModuleInfo
     public $permissions = [];
 
     /** @var  array */
-    public $navigation;
+    public $navigation = [];
 
     /** @var  array */
     public $handlers;
@@ -77,11 +77,17 @@ class ModuleInfo
         return true;
     }
 
+    /**
+     *
+     */
     private function getIDFromRawInfo()
     {
         $this->id = $this->_rawInfo['id'];
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private function getPermissionsFromRawInfo()
     {
         $permissions = $this->_rawInfo['permissions'];
@@ -97,16 +103,54 @@ class ModuleInfo
         }
     }
 
+    /**
+     *
+     */
     private function getSpecificationsFromRawInfo()
     {
         $this->specifications = $this->_rawInfo['specifications'];
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     private function getNavigationFromRawInfo()
     {
-        $this->navigation = $this->_rawInfo['navigation'];
+        $navigation = $this->_rawInfo['navigation'];
+        foreach ($navigation as $key => $subNavs) {
+            foreach ($subNavs as $k => $subNav) {
+                // generate url filed
+                if (is_string($subNavs[$k])) {
+                    $subNav = $subNavs[$k] = [
+                        'url' => ["/{$this->id}" . $subNav],
+                        'route' => $subNav
+                    ];
+                } elseif (isset($subNav['route'])) {
+                    $subNavs[$k]['url'] = ["/{$this->id}" . $subNav['route']];
+                } else {
+                    throw new InvalidConfigException("The config of navigation is invalid @{$this->id} : {$key}-{$k}");
+                }
+                // convert the permission name
+                if (!isset($subNav['bind-permission']))
+                    $subNav['bind-permission'] = [];
+
+                if (is_string($subNav['bind-permission']))
+                    $subNav['bind-permission'] = array($subNav['bind-permission']);
+
+                $bindPermission = [];
+                foreach ($subNav['bind-permission'] as $p) {
+                    array_push($bindPermission, "{$this->id}.{$p}");
+                }
+                $subNavs[$k]['bind-permission'] = $bindPermission;
+
+            }
+            $this->navigation[$key] = $subNavs;
+        }
     }
 
+    /**
+     *
+     */
     private function getHandlersFromRawInfo()
     {
         $this->handlers = $this->_rawInfo['handlers'];

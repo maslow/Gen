@@ -24,12 +24,15 @@ return [
             'view' => 'View Administrator',
             'update' => 'Update Administrator',
             'delete' => 'Delete Administrator',
+            'create' => 'Create Administrator',
+            'reset-password' => 'Reset Password',
         ],
         'role' => [
             'list' => 'Browse Administrator',
             'view' => 'View Administrator',
             'update' => 'Update Administrator',
             'delete' => 'Delete Administrator',
+            'create' => 'Create Administrator',
         ]
     ],
 
@@ -54,9 +57,22 @@ return [
             ],
         ],
         'Roles' => [
-            'Role List' => 'role/list',
-            'Create Role' => 'role/create',
-            'Update Role' => 'role/update',
+            'Role List' => [
+                'route' => 'role/list',
+                'bind-permission' => [
+                    'role.list',
+                    'role.update',
+                    'role.delete'
+                ]
+            ],
+            'Create Role' => [
+                'route' => 'role/create',
+                'bind-permission' => 'administrator.create'
+            ],
+            'Update Role' => [
+                'route' => 'role/update',
+                'bind-permission' => 'role.update'
+            ],
         ]
     ],
 
