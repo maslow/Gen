@@ -1,4 +1,10 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * Author: Maslow(wangfugen@126.com)
+ * Date: 5/7/16
+ * Time: 9:48 AM
+ */
 
 namespace app\gen\commands;
 

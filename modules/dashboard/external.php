@@ -14,11 +14,23 @@ return [
         'version' => '1.0.0',
         'description' => 'Dashboard module of Gen.',
         'bootstrap' => true,
-        'deps' => [],
+        'dependencies' => [],
     ],
 
     // Mark: Permissions exported
     'permissions' => [
+        'administrator' => [
+            'list' => 'Browse Administrator',
+            'view' => 'View Administrator',
+            'update' => 'Update Administrator',
+            'delete' => 'Delete Administrator',
+        ],
+        'role' => [
+            'list' => 'Browse Administrator',
+            'view' => 'View Administrator',
+            'update' => 'Update Administrator',
+            'delete' => 'Delete Administrator',
+        ]
     ],
 
     // Mark: Navigation configuration
@@ -39,8 +51,13 @@ return [
             'Reset Password' => [
                 'route' => 'administrator/reset-password',
                 'bind-permission' => 'administrator.reset-password',
-            ]
+            ],
         ],
+        'Roles' => [
+            'Role List' => 'role/list',
+            'Create Role' => 'role/create',
+            'Update Role' => 'role/update',
+        ]
     ],
 
     // Mark: handlers
@@ -57,7 +74,7 @@ return [
                 $role->name = 'super-admin';
                 $role->description = 'Super Admin';
                 $auth->add($role);
-            }else{
+            } else {
                 $role = $auth->getRole($role->name);
             }
 
@@ -66,7 +83,7 @@ return [
                 if (!$auth->hasChild($role, $p))
                     $auth->addChild($role, $p);
             }
-
+            // Create an Administrator ,then assign the role created above to it
             $admin = new \app\modules\dashboard\models\Administrator();
             $admin->username = 'gen';
             $admin->password_hash = Yii::$app->security->generatePasswordHash('000000');
@@ -76,7 +93,7 @@ return [
             $admin->created_at = time();
             $admin->created_by = 0;
             $admin->created_ip = "127.0.0.1";
-            if($admin->save()){
+            if ($admin->save()) {
                 $auth->assign($role, $admin->id);
                 return true;
             }
@@ -98,7 +115,7 @@ return [
                 $role->name = 'super-admin';
                 $role->description = 'Super Admin';
                 $auth->add($role);
-            }else {
+            } else {
                 $role = $auth->getRole($role->name);
             }
 
@@ -117,7 +134,7 @@ return [
             $admin->created_at = time();
             $admin->created_by = 0;
             $admin->created_ip = "127.0.0.1";
-            if($admin->save()){
+            if ($admin->save()) {
                 $auth->removeAllAssignments();
                 $auth->assign($role, $admin->id);
                 return true;

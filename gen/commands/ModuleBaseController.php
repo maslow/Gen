@@ -11,6 +11,7 @@ namespace app\gen\commands;
 use app\gen\ModuleManager;
 use yii\base\ErrorException;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\console\Controller;
 use yii\helpers\FileHelper;
 
@@ -52,7 +53,7 @@ class ModuleBaseController extends Controller
             if (ModuleManager::hasMigrationFiles($module_id)) $this->revertMigrations($module_id);
 
             FileHelper::removeDirectory(ModuleManager::getModuleRootPath($module_id, false));
-            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
+            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . ' Line:' . $e->getLine() . "\n");
         }
         FileHelper::removeDirectory(ModuleManager::getModulePathInTransferStation($module_id, false));
         return 0;
@@ -89,7 +90,7 @@ class ModuleBaseController extends Controller
 
         } catch (\Exception $e) {
             FileHelper::removeDirectory(ModuleManager::getModulePathInTransferStation($module_id, false));
-            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
+            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . ' Line:' . $e->getLine() . "\n");
         }
         FileHelper::removeDirectory(ModuleManager::getModuleRootPath($module_id, false));
         return 0;
@@ -115,26 +116,41 @@ class ModuleBaseController extends Controller
             $this->callHandler('afterUpdate', $moduleInfo->handlers);
         } catch (\Exception $e) {
             $this->revertPermissions($oldPermission, $module_id);
-            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
+            return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . ' Line:' . $e->getLine() . "\n");
         }
         return 0;
     }
 
     /**
-     * TODO implement
      * @param $permissions
+     * @throws InvalidConfigException
      */
     private function installPermissions($permissions)
     {
-
+        $auth = \Yii::$app->authManager;
+        foreach ($permissions as $name => $description) {
+            if (!$auth->getPermission($name)) {
+                $p = $auth->createPermission($name);
+                $p->description = $description;
+                if (!$auth->add($p))
+                    throw new InvalidConfigException('Error in adding permission to auth system！' . __METHOD__);
+            }
+        }
     }
 
     /**
-     * TODO implement
      * @param $permissions
+     * @throws InvalidConfigException
      */
     private function removePermissions($permissions)
     {
+        $auth = \Yii::$app->authManager;
+        foreach ($permissions as $name => $description) {
+            if ($p = $auth->getPermission($name)) {
+                if (!$auth->remove($p))
+                    throw new InvalidConfigException('Error in removing permission from auth system！' . __METHOD__);
+            }
+        }
     }
 
     /**

@@ -83,10 +83,14 @@ class MainController extends Controller
                 continue;
             foreach ($moduleInfo->navigation as $key => $subNavs) {
                 foreach ($subNavs as $k => $subNav) {
-                    if (is_string($subNavs[$k]))
-                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav[$k]];
-                    else
+                    if (is_string($subNavs[$k])) {
+                        $subNavs[$k] =[
+                            'url' =>["/{$module_id}" . $subNav],
+                            'route' => $subNav
+                        ];
+                    }else {
                         $subNavs[$k]['url'] = ["/{$module_id}" . $subNav['route']];
+                    }
                 }
                 $navigationList[$key] = $subNavs;
             }

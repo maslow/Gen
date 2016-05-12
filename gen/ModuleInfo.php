@@ -7,7 +7,9 @@
  */
 
 namespace app\gen;
+
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 
 /**
@@ -26,7 +28,7 @@ class ModuleInfo
     public $specifications;
 
     /** @var  array */
-    public $permissions;
+    public $permissions = [];
 
     /** @var  array */
     public $navigation;
@@ -51,11 +53,11 @@ class ModuleInfo
     public function resolveRawInfo()
     {
         if (self::validateRawInfo($this->_rawInfo)) {
-            $this->permissions = self::getPermissionsFromRawInfo($this->_rawInfo);
-            $this->specifications = self::getSpecificationsFromRawInfo($this->_rawInfo);
-            $this->navigation = self::getNavigationFromRawInfo($this->_rawInfo);
-            $this->handlers = self::getHandlersFromRawInfo($this->_rawInfo);
-            $this->id = self::getIDFromRawInfo($this->_rawInfo);
+            $this->getIDFromRawInfo();
+            $this->getPermissionsFromRawInfo();
+            $this->getNavigationFromRawInfo();
+            $this->getHandlersFromRawInfo();
+            $this->getSpecificationsFromRawInfo();
         } else {
             throw new Exception("The raw info of module is invalid.");
         }
@@ -67,57 +69,46 @@ class ModuleInfo
      */
     public static function validateRawInfo($rawInfo)
     {
-        if(!isset($rawInfo['id'])) return false;
-        if(!isset($rawInfo['specifications'])) return false;
-        if(!isset($rawInfo['permissions'])) return false;
-        if(!isset($rawInfo['navigation'])) return false;
-        if(!isset($rawInfo['handlers'])) return false;
-
+        if (!isset($rawInfo['id'])) return false;
+        if (!isset($rawInfo['specifications'])) return false;
+        if (!isset($rawInfo['permissions'])) return false;
+        if (!isset($rawInfo['navigation'])) return false;
+        if (!isset($rawInfo['handlers'])) return false;
         return true;
     }
 
-    /**
-     * @param $rawInfo mixed
-     * @return string
-     */
-    public static function getIDFromRawInfo($rawInfo)
+    private function getIDFromRawInfo()
     {
-        return $rawInfo['id'];
+        $this->id = $this->_rawInfo['id'];
     }
 
-    /**
-     * @param $rawInfo mixed
-     * @return mixed
-     */
-    public static function getPermissionsFromRawInfo($rawInfo)
+    private function getPermissionsFromRawInfo()
     {
-        return $rawInfo['permissions'];
+        $permissions = $this->_rawInfo['permissions'];
+        foreach ($permissions as $c => $p) {
+            foreach ($p as $a => $description) {
+                $name = "{$this->id}.{$c}.{$a}";
+                if (is_string($description)) {
+                    $this->permissions[$name] = $description;
+                } else {
+                    throw new InvalidConfigException("The format of {$name} is invalid.");
+                }
+            }
+        }
     }
 
-    /**
-     * @param $rawInfo mixed
-     * @return mixed
-     */
-    public static function getSpecificationsFromRawInfo($rawInfo)
+    private function getSpecificationsFromRawInfo()
     {
-        return $rawInfo['specifications'];
+        $this->specifications = $this->_rawInfo['specifications'];
     }
 
-    /**
-     * @param $rawInfo mixed
-     * @return mixed
-     */
-    public static function getNavigationFromRawInfo($rawInfo)
+    private function getNavigationFromRawInfo()
     {
-        return $rawInfo['navigation'];
+        $this->navigation = $this->_rawInfo['navigation'];
     }
 
-    /**
-     * @param $rawInfo mixed
-     * @return mixed
-     */
-    public static function getHandlersFromRawInfo($rawInfo)
+    private function getHandlersFromRawInfo()
     {
-        return $rawInfo['handlers'];
+        $this->handlers = $this->_rawInfo['handlers'];
     }
 }// end of class definition

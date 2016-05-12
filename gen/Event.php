@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: wangfugen
- * Date: 15/12/9
- * Time: 下午5:31
+ * Date: 12/9/15
+ * Time: 6:29 PM
  */
 
 namespace app\gen;
