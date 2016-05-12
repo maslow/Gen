@@ -26,10 +26,7 @@ class ModuleManager
      */
     public static function isModuleExist($module_id)
     {
-        if (!file_exists(self::getModuleExternalFilePath($module_id, false))) {
-            return false;
-        }
-        return true;
+        return file_exists(self::getModuleExternalFilePath($module_id, false));
     }
 
     /**
@@ -199,7 +196,7 @@ class ModuleManager
      */
     public static function isModuleExistInTransferStation($module_id)
     {
-        return file_exists(self::getTransferStationPath(false) . DIRECTORY_SEPARATOR . $module_id);
+        return file_exists(self::getModulePathInTransferStation($module_id, false));
     }
 
     /**

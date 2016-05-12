@@ -6,12 +6,14 @@
  * Time: 2:27 PM
  */
 
-/* @var $this \yii\web\View */
-/* @var $navigationList array */
+/** @var $this \yii\web\View */
+/** @var $navigationList array */
 
 use \yii\helpers\Url;
 
 \app\modules\dashboard\assets\AdminLTEAsset::register($this);
+/** @var  $administrator \app\modules\dashboard\models\Administrator*/
+$administrator = Yii::$app->administrator;
 ?>
 
 <div class="wrapper">
@@ -39,15 +41,15 @@ use \yii\helpers\Url;
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-user"></i>
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                            <span class="hidden-xs"><?= "Test"//$manager->identity->username ?></span>
+                            <span class="hidden-xs"><?= $administrator->identity->username ?></span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
                             <li class="user-header">
                                 <p>
-                                    <?= 'Test'/*$manager->identity->username*/ ?> -
+                                    <?= $administrator->identity->username ?> -
                                     <?= 'Test'/*($role = current(Yii::$app->authManager->getRolesByUser($manager->id))) ? $role->description : '?'*/ ?>
-                                    <small>Since <?= 'Test'/*date('Y/m/d', $manager->identity->created_at)*/ ?></small>
+                                    <small>Since <?= date('Y/m/d', $administrator->identity->created_at) ?></small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
@@ -59,7 +61,7 @@ use \yii\helpers\Url;
                                     </a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="<?= Url::to(['/dashboard/default/logout']) ?>"
+                                    <a href="<?= Url::to(['/dashboard/main/logout']) ?>"
                                        class="btn btn-default btn-flat"><?= Yii::t('app', 'Logout') ?></a>
                                 </div>
                             </li>
@@ -121,10 +123,10 @@ use \yii\helpers\Url;
     <footer class="main-footer">
         <!-- To the right -->
         <div class="pull-right hidden-xs">
-            Powerred by <b>Gen</b>
+            Powered by Ge<b>n</b>
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; <?= date('Y') ?> <a href="#">Gen</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; <?= date('Y') ?> <a href="#">Ge<b>n</b></a>.</strong> All rights reserved.
     </footer>
 
 </div>

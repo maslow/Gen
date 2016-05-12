@@ -50,6 +50,23 @@ return [
         },
         // the function will be called after installation of this module
         'afterInstall' => function () {
+            // Create a Role that has all permissions
+            $auth = \Yii::$app->authManager;
+            $role = new yii\rbac\Role();
+            if (!$auth->getRole($role->name)) {
+                $role->name = 'super-admin';
+                $role->description = 'Super Admin';
+                $auth->add($role);
+            }else{
+                $role = $auth->getRole($role->name);
+            }
+
+            $permissions = $auth->getPermissions();
+            foreach ($permissions as $p) {
+                if (!$auth->hasChild($role, $p))
+                    $auth->addChild($role, $p);
+            }
+
             $admin = new \app\modules\dashboard\models\Administrator();
             $admin->username = 'gen';
             $admin->password_hash = Yii::$app->security->generatePasswordHash('000000');
@@ -59,7 +76,11 @@ return [
             $admin->created_at = time();
             $admin->created_by = 0;
             $admin->created_ip = "127.0.0.1";
-            return $admin->save();
+            if($admin->save()){
+                $auth->assign($role, $admin->id);
+                return true;
+            }
+            return false;
         },
 
         'beforeUpdate' => function () {
@@ -69,6 +90,24 @@ return [
             if (\app\modules\dashboard\models\Administrator::find()->exists()) {
                 return true;
             }
+            // Create a Role that has all permissions
+            $auth = \Yii::$app->authManager;
+
+            $role = new yii\rbac\Role();
+            if (!$auth->getRole($role->name)) {
+                $role->name = 'super-admin';
+                $role->description = 'Super Admin';
+                $auth->add($role);
+            }else {
+                $role = $auth->getRole($role->name);
+            }
+
+            $permissions = $auth->getPermissions();
+            foreach ($permissions as $p) {
+                if (!$auth->hasChild($role, $p))
+                    $auth->addChild($role, $p);
+            }
+
             $admin = new \app\modules\dashboard\models\Administrator();
             $admin->username = 'gen';
             $admin->password_hash = Yii::$app->security->generatePasswordHash('000000');
@@ -78,12 +117,19 @@ return [
             $admin->created_at = time();
             $admin->created_by = 0;
             $admin->created_ip = "127.0.0.1";
-            return $admin->save();
+            if($admin->save()){
+                $auth->removeAllAssignments();
+                $auth->assign($role, $admin->id);
+                return true;
+            }
+            return false;
         },
+
         // the beforeRemove function will be called before removing this module
         'beforeRemove' => function () {
             return true;
         },
+
         'afterRemove' => function () {
             return true;
         }

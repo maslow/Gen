@@ -41,7 +41,7 @@ class Module extends \yii\base\Module
         parent::init();
         \Yii::$app->set('administrator', [
             'class' => '\yii\web\User',
-            'identityClass' => 'app\modules\dashboard\models\Administrator' ,
+            'identityClass' => 'app\modules\dashboard\models\Administrator',
             'enableAutoLogin' => false,
             'idParam' => "__{$this->id}__id",
             'identityCookie' => [
