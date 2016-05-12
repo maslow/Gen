@@ -27,23 +27,11 @@ class MainController extends Controller
      */
     public function actionIndex()
     {
-        $modules = ModuleManager::getModuleList();
-        $navigationList = [];
-        foreach ($modules as $module_id) {
-            $moduleInfo = ModuleManager::getModuleInfo($module_id);
-            if(!isset($moduleInfo->navigation) || !is_array($moduleInfo->navigation))
-                continue;
-            foreach ($moduleInfo->navigation as $key => $subNavs) {
-                foreach ($subNavs as $k => $subNav) {
-                    if (is_string($subNavs[$k]))
-                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav[$k]];
-                    else
-                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav['route']];
-                }
-                $navigationList[$key] = $subNavs;
-            }
+        if ($this->getAdministrator()->isGuest) {
+            return $this->redirect(['main/login']);
         }
-        return $this->render('index', ['navigationList' => $navigationList]);
+
+        return $this->render('index', ['navigationList' => $this->generateNavigationList()]);
     }
 
     /**
@@ -64,9 +52,45 @@ class MainController extends Controller
     }
 
     /**
-     * @return \app\modules\dashboard\models\Administrator
+     * @return \yii\web\Response
      */
-    public function getAdministrator(){
+    public function actionLogout()
+    {
+        if (!$this->getAdministrator()->isGuest) {
+            $this->getAdministrator()->logout();
+        }
+        return $this->redirect(['main/login']);
+    }
+
+    /**
+     * @return \yii\web\User
+     */
+    private function getAdministrator()
+    {
         return \Yii::$app->administrator;
+    }
+
+    /**
+     * @return array
+     */
+    private function generateNavigationList()
+    {
+        $modules = ModuleManager::getModuleList();
+        $navigationList = [];
+        foreach ($modules as $module_id) {
+            $moduleInfo = ModuleManager::getModuleInfo($module_id);
+            if (!isset($moduleInfo->navigation) || !is_array($moduleInfo->navigation))
+                continue;
+            foreach ($moduleInfo->navigation as $key => $subNavs) {
+                foreach ($subNavs as $k => $subNav) {
+                    if (is_string($subNavs[$k]))
+                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav[$k]];
+                    else
+                        $subNavs[$k]['url'] = ["/{$module_id}" . $subNav['route']];
+                }
+                $navigationList[$key] = $subNavs;
+            }
+        }
+        return $navigationList;
     }
 }

@@ -27,9 +27,9 @@ class ModuleBaseController extends Controller
      */
     public function actionInstall($module_id)
     {
-        try{
+        try {
             $this->createModuleTransferStation();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
         };
 
@@ -41,25 +41,35 @@ class ModuleBaseController extends Controller
 
         try {
             FileHelper::copyDirectory(
-                ModuleManager::getModulePathInTransferStation($module_id,false),
+                ModuleManager::getModulePathInTransferStation($module_id, false),
                 ModuleManager::getModuleRootPath($module_id, false)
             );
 
             $moduleInfo = ModuleManager::getModuleInfo($module_id);
 
+            $handlers = $moduleInfo->handlers;
+            if (isset($handlers['beforeInstall']) && is_callable($handlers['beforeInstall'])) {
+                if (false === $handlers['beforeInstall']()) {
+                    throw new Exception("The beforeInstall function has returned false , then cancel the installation.");
+                }
+            }
+
             if (ModuleManager::hasMigrationFiles($module_id)) {
-                $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
-                $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
-                $cmd = "php yii migrate/up --interactive=0 --migrationPath={$migrationPath} --migrationTable={$migrationTable}";
-                $return_var = null;
-                system($cmd, $return_var);
-                if ($return_var) {
+                if (false === $this->applyMigrations($module_id)) {
                     throw new Exception("ERROR: The execution of migrate/up failed, please check it up and try again!");
                 }
             }
             $this->installPermissions($moduleInfo->permissions);
 
+            if (isset($handlers['afterInstall']) && is_callable($handlers['afterInstall'])) {
+                if (false === $handlers['afterInstall']()) {
+                    throw new Exception("The afterInstall function has returned false , then cancel the installation.");
+                }
+            }
         } catch (\Exception $e) {
+            if (ModuleManager::hasMigrationFiles($module_id)) {
+                $this->revertMigrations($module_id);
+            }
             FileHelper::removeDirectory(ModuleManager::getModuleRootPath($module_id, false));
             return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . "\n");
         }
@@ -92,16 +102,10 @@ class ModuleBaseController extends Controller
             $this->removePermissions($moduleInfo->permissions);
 
             if (ModuleManager::hasMigrationFiles($module_id)) {
-                $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
-                $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
-                $cmd = "php yii migrate/to 0 --interactive=0 --migrationPath={$migrationPath} --migrationTable={$migrationTable}";
-                $return_var = null;
-                system($cmd, $return_var);
-                if ($return_var) {
+                if (false === $this->revertMigrations($module_id)) {
                     throw new Exception("ERROR: The execution of clearing migrations failed, please check it up and try again!");
                 }
             }
-
         } catch (\Exception $e) {
             FileHelper::removeDirectory(
                 ModuleManager::getTransferStationPath(false) . DIRECTORY_SEPARATOR . $module_id
@@ -117,16 +121,6 @@ class ModuleBaseController extends Controller
 
     }
 
-    public function actionFlush($module_id)
-    {
-
-    }
-
-    public function actionFlushAll()
-    {
-
-    }
-
     private function installPermissions($permissions)
     {
 
@@ -138,10 +132,39 @@ class ModuleBaseController extends Controller
     }
 
     /**
+     * @param $module_id
+     * @return bool
+     */
+    private function applyMigrations($module_id)
+    {
+        $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
+        $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
+        $cmd = "php yii migrate/up --interactive=0 --migrationPath={$migrationPath} --migrationTable={$migrationTable}";
+        $return_var = null;
+        system($cmd, $return_var);
+        return $return_var ? false : true;
+    }
+
+    /**
+     * @param $module_id
+     * @return bool
+     */
+    private function revertMigrations($module_id)
+    {
+        $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
+        $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
+        $cmd = "php yii migrate/to 0 --interactive=0 --migrationPath={$migrationPath} --migrationTable={$migrationTable}";
+        $return_var = null;
+        system($cmd, $return_var);
+        return $return_var ? false : true;
+    }
+
+    /**
      * @throws Exception
      */
-    private function createModuleTransferStation(){
-        if(!file_exists(ModuleManager::getTransferStationPath(false)))
+    private function createModuleTransferStation()
+    {
+        if (!file_exists(ModuleManager::getTransferStationPath(false)))
             FileHelper::createDirectory(ModuleManager::getTransferStationPath(false));
     }
 }
