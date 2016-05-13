@@ -20,6 +20,19 @@ use yii\web\NotFoundHttpException;
 class DashboardAdministratorController extends DashboardController
 {
     /**
+     * @return array
+     */
+    public function accessControl()
+    {
+        return [
+            'list' => 'administrator.list',
+            'create' => 'administrator.create',
+            'update' => 'administrator.update',
+            'reset-password' => 'administrator.reset-password',
+        ];
+    }
+
+    /**
      * @return string
      */
     public function actionList()
