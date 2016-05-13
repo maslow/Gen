@@ -75,7 +75,7 @@ class UpdateAdministratorForm extends Model
                     Yii::error($this->getErrors());
                 }
             } catch (\Exception $e) {
-                Yii::error($e->getMessage());
+                Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
                 $this->addError('username', Yii::t('dashboard','Throw an exception of saving data!'));
             }
         }

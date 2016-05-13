@@ -12,6 +12,7 @@ namespace app\modules\dashboard\controllers;
 use app\gen\DashboardController;
 use app\modules\dashboard\models\Administrator;
 use app\modules\dashboard\models\CreateAdministratorForm;
+use app\modules\dashboard\models\ResetPasswordForm;
 use app\modules\dashboard\models\UpdateAdministratorForm;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
@@ -68,6 +69,18 @@ class DashboardAdministratorController extends DashboardController
         }
 
         return $this->render('update', ['model' => $model]);
+    }
+
+    /**
+     * @return string|\yii\web\Response
+     */
+    public function actionResetPassword()
+    {
+        $model = new ResetPasswordForm();
+        if ($model->load(\Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['list']);
+        }
+        return $this->render('reset-password', ['model' => $model]);
     }
 
     /**

@@ -55,7 +55,7 @@ $administrator = Yii::$app->administrator;
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="<?= Url::to(['/dashboard/reset-password']) ?>" target="sub-container"
+                                    <a href="<?= Url::to(['/dashboard/dashboard-administrator/reset-password']) ?>" target="sub-container"
                                        class="btn btn-default btn-flat">
                                         <?= Yii::t('app', 'Reset Password') ?>
                                     </a>
