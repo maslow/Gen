@@ -48,7 +48,7 @@ $administrator = Yii::$app->administrator;
                             <li class="user-header">
                                 <p>
                                     <?= $administrator->identity->username ?> -
-                                    <?= 'Test'/*($role = current(Yii::$app->authManager->getRolesByUser($manager->id))) ? $role->description : '?'*/ ?>
+                                    <?= ($role = current(Yii::$app->authManager->getRolesByUser($administrator->id))) ? $role->description : '?' ?>
                                     <small>Since <?= date('Y/m/d', $administrator->identity->created_at) ?></small>
                                 </p>
                             </li>

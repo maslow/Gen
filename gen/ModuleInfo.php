@@ -126,7 +126,7 @@ class ModuleInfo
                         'route' => $subNav
                     ];
                 } elseif (isset($subNav['route'])) {
-                    $subNavs[$k]['url'] = ["/{$this->id}" . $subNav['route']];
+                    $subNavs[$k]['url'] = ["/{$this->id}/{$subNav['route']}"];
                 } else {
                     throw new InvalidConfigException("The config of navigation is invalid @{$this->id} : {$key}-{$k}");
                 }

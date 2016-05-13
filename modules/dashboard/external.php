@@ -40,7 +40,7 @@ return [
     'navigation' => [
         'Administrators' => [
             'Administrator List' => [
-                'route' => 'administrator/list',
+                'route' => 'dashboard-administrator/list',
                 'bind-permission' => [
                     'administrator.list',
                     'administrator.update',
@@ -48,17 +48,17 @@ return [
                 ],
             ],
             'Create Administrator' => [
-                'route' => 'administrator/create',
+                'route' => 'dashboard-administrator/create',
                 'bind-permission' => 'administrator.create',
             ],
             'Reset Password' => [
-                'route' => 'administrator/reset-password',
+                'route' => 'dashboard-administrator/reset-password',
                 'bind-permission' => 'administrator.reset-password',
             ],
         ],
         'Roles' => [
             'Role List' => [
-                'route' => 'role/list',
+                'route' => 'dashboard-role/list',
                 'bind-permission' => [
                     'role.list',
                     'role.update',
@@ -66,11 +66,11 @@ return [
                 ]
             ],
             'Create Role' => [
-                'route' => 'role/create',
+                'route' => 'dashboard-role/create',
                 'bind-permission' => 'administrator.create'
             ],
             'Update Role' => [
-                'route' => 'role/update',
+                'route' => 'dashboard-role/update',
                 'bind-permission' => 'role.update'
             ],
         ]
@@ -107,7 +107,7 @@ return [
             $admin->locked = 0;
             $admin->updated_at = time();
             $admin->created_at = time();
-            $admin->created_by = 0;
+            $admin->created_by = 1;
             $admin->created_ip = "127.0.0.1";
             if ($admin->save()) {
                 $auth->assign($role, $admin->id);
