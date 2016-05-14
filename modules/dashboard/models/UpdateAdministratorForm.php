@@ -5,6 +5,7 @@ namespace app\modules\dashboard\models;
 use app\modules\dashboard\Module;
 use Yii;
 use app\gen\Event;
+use yii\base\Exception;
 use yii\base\Model;
 
 /**
@@ -52,34 +53,32 @@ class UpdateAdministratorForm extends Model
      */
     public function save()
     {
-        $event = new Event(['model' => $this]);
         if ($this->validate()) {
             /* @var Administrator $administrator */
             $administrator = Administrator::findOne($this->id);
             try {
-                if ($this->password) {
+                if ($this->password)
                     $administrator->password_hash = Yii::$app->security->generatePasswordHash($this->password);
-                }
+
                 $administrator->updated_at = time();
 
+                if (!($role = $this->getAuth()->getRole($this->role)))
+                    throw new Exception("The role {$this->role} is not exist!");
+
                 if ($administrator->save()) {
-                    $role = $this->getAuth()->getRole($this->role);
-                    if (!$role) {
-                        throw new \InvalidArgumentException(Yii::t('dashboard', 'The role is not exist!'));
-                    }
                     $this->getAuth()->revokeAll($administrator->id);
                     $this->getAuth()->assign($role, $administrator->id);
-                    Event::trigger(Module::className(), Module::EVENT_UPDATE_MANAGER_SUCCESS, $event);
+                    Event::trigger(Module::className(), Module::EVENT_UPDATE_MANAGER_SUCCESS);
                     return true;
                 } else {
-                    Yii::error($this->getErrors());
+                    throw new Exception("Save administrator failed #{$administrator->getErrors()}");
                 }
             } catch (\Exception $e) {
                 Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
-                $this->addError('username', Yii::t('dashboard','Throw an exception of saving data!'));
+                $this->addError('username', Yii::t('dashboard', 'Error!'));
             }
         }
-        Event::trigger(Module::className(), Module::EVENT_UPDATE_MANAGER_FAIL, $event);
+        Event::trigger(Module::className(), Module::EVENT_UPDATE_MANAGER_FAIL);
         return false;
     }
 

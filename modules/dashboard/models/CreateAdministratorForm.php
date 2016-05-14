@@ -5,7 +5,7 @@ namespace app\modules\dashboard\models;
 use app\modules\dashboard\Module;
 use Yii;
 use app\gen\Event;
-use yii\base\InvalidParamException;
+use yii\base\Exception;
 use yii\base\Model;
 
 /**
@@ -57,27 +57,25 @@ class CreateAdministratorForm extends Model
             try {
                 $administrator->username = $this->username;
                 $administrator->password_hash = Yii::$app->security->generatePasswordHash($this->password);
-                $administrator->updated_at = time();
-                $administrator->created_at = time();
+                $administrator->created_at = $administrator->updated_at = time();
                 $administrator->auth_key = Yii::$app->security->generateRandomString();
                 $administrator->created_ip = Yii::$app->request->getUserIP();
                 $administrator->created_by = Yii::$app->administrator->identity->id;
                 $administrator->locked = 0;
 
+                if (!($role = $this->getAuth()->getRole($this->role)))
+                    throw new Exception("The role {$this->role} is not exist!");
+
                 if ($administrator->save()) {
-                    $role = $this->getAuth()->getRole($this->role);
-                    if (!$role) {
-                        throw new \InvalidArgumentException('The role is not exist!');
-                    }
                     $this->getAuth()->assign($role, $administrator->id);
                     Event::trigger(Module::className(), Module::EVENT_CREATE_MANAGER_SUCCESS, $event);
                     return true;
                 } else {
-                    throw new InvalidParamException("Save administrator failed #{$administrator->getErrors()}");
+                    throw new Exception("Save administrator failed #{$administrator->getErrors()}");
                 }
             } catch (\Exception $e) {
                 Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
-                $this->addError('username', Yii::t('dashboard', 'Throw an exception of saving data!'));
+                $this->addError('username', Yii::t('dashboard', 'Error!'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_CREATE_MANAGER_FAIL, $event);

@@ -5,7 +5,7 @@ namespace app\modules\dashboard\models;
 use app\modules\dashboard\Module;
 use Yii;
 use app\gen\Event;
-use yii\base\InvalidParamException;
+use yii\base\Exception;
 use yii\base\Model;
 
 /**
@@ -45,7 +45,6 @@ class ResetPasswordForm extends Model
      */
     public function save()
     {
-        $event = new Event(['model' => $this]);
         if ($this->validate()) {
             /* @var $administrator Administrator */
             $administrator = Yii::$app->administrator->identity;
@@ -55,17 +54,17 @@ class ResetPasswordForm extends Model
                 $administrator->auth_key = Yii::$app->security->generateRandomString();
 
                 if ($administrator->save()) {
-                    Event::trigger(Module::className(), Module::EVENT_RESET_PASSWORD_SUCCESS, $event);
+                    Event::trigger(Module::className(), Module::EVENT_RESET_PASSWORD_SUCCESS);
                     return true;
                 } else {
-                    throw new InvalidParamException("Save administrator failed #{$administrator->getErrors()}");
+                    throw new Exception("Save administrator failed #{$administrator->getErrors()}");
                 }
             } catch (\Exception $e) {
                 Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
-                $this->addError('password', Yii::t('dashboard', 'Throw an exception of saving data!'));
+                $this->addError('password', Yii::t('dashboard', 'Error!'));
             }
         }
-        Event::trigger(Module::className(), Module::EVENT_RESET_PASSWORD_FAIL, $event);
+        Event::trigger(Module::className(), Module::EVENT_RESET_PASSWORD_FAIL);
         return false;
     }
 
