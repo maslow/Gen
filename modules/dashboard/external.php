@@ -68,11 +68,7 @@ return [
             'Create Role' => [
                 'route' => 'dashboard-role/create',
                 'bind-permission' => 'administrator.create'
-            ],
-            'Update Role' => [
-                'route' => 'dashboard-role/update',
-                'bind-permission' => 'role.update'
-            ],
+            ]
         ]
     ],
 

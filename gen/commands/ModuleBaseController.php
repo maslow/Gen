@@ -210,7 +210,7 @@ class ModuleBaseController extends Controller
      */
     private function callHandler($handlerName, $handlers)
     {
-        if (isset($handlers[$handlerName]) && is_callable($handlers[$handlerName])) {
+        if ($handlers && isset($handlers[$handlerName]) && is_callable($handlers[$handlerName])) {
             if (false === $handlers[$handlerName]()) {
                 throw new Exception("The {$handlerName} function has returned false ,it will cancel the current operation.");
             }
