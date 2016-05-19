@@ -46,7 +46,7 @@ class ModuleBaseController extends Controller
                 throw new Exception("ERROR: The execution of migrate/up failed, please check it up and try again!");
 
             $this->installPermissions($moduleInfo->permissions);
-
+            $this->generateModulesConfigFile();
             $this->callHandler('afterInstall', $moduleInfo->handlers);
 
         } catch (\Exception $e) {
@@ -87,12 +87,12 @@ class ModuleBaseController extends Controller
                 throw new Exception("ERROR: The execution of clearing migrations failed, please check it up and try again!");
 
             $this->callHandler('afterRemove', $moduleInfo->handlers);
-
         } catch (\Exception $e) {
             FileHelper::removeDirectory(ModuleManager::getModulePathInTransferStation($module_id, false));
             return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . ' Line:' . $e->getLine() . "\n");
         }
         FileHelper::removeDirectory(ModuleManager::getModuleRootPath($module_id, false));
+        $this->generateModulesConfigFile();
         return 0;
     }
 
@@ -113,12 +113,23 @@ class ModuleBaseController extends Controller
 
             if (ModuleManager::hasMigrationFiles($module_id) && !$this->applyMigrations($module_id))
                 throw new Exception("ERROR: The execution of clearing migrations failed, please check it up and try again!");
+            $this->generateModulesConfigFile();
             $this->callHandler('afterUpdate', $moduleInfo->handlers);
         } catch (\Exception $e) {
             $this->revertPermissions($oldPermission, $module_id);
             return $this->stderr($e->getMessage() . ' File:' . $e->getFile() . ' Line:' . $e->getLine() . "\n");
         }
         return 0;
+    }
+
+    /**
+     *
+     */
+    public function actionUpdateAll(){
+        $modules = ModuleManager::getModuleList();
+        foreach($modules as $id){
+            $this->actionUpdate($id);
+        }
     }
 
     /**
@@ -201,6 +212,35 @@ class ModuleBaseController extends Controller
         $return_var = null;
         system($cmd, $return_var);
         return $return_var ? false : true;
+    }
+
+    /**
+     * @return int
+     */
+    private function generateModulesConfigFile()
+    {
+        $modules_content = '';
+        $bootstrap_list_content = '';
+        $moduleList = ModuleManager::getModuleList();
+        foreach ($moduleList as $id) {
+            $moduleInfo = ModuleManager::getModuleInfo($id);
+            $class = ModuleManager::getModuleFullClassName($id);
+            $modules_content .= <<<STR
+        '{$id}' => [
+            'class' => '{$class}',
+        ],
+STR;
+            if ($moduleInfo->isBootstrap())
+                $bootstrap_list_content = "'{$id}',\n";
+            $modules_content .= "\n";
+        }
+        $modules_content = "<?php return [\n" . $modules_content . "\n];";
+        $bootstrap_list_content = "<?php return [\n" . $bootstrap_list_content . "\n];";
+        file_put_contents(ModuleManager::getModulesConfigFilePath(false), $modules_content);
+        file_put_contents(
+            dirname(ModuleManager::getModulesConfigFilePath(false)) . DIRECTORY_SEPARATOR . 'bootstrap.php',
+            $bootstrap_list_content
+        );
     }
 
     /**

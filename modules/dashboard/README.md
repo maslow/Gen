@@ -5,41 +5,48 @@ Dashboard是后台管理中心模块，集成了管理员、管理控制台，�
 
 Dashboard通过读取每个模块的`导出导航菜单`与`导出权限`配置来完成对所有模块的集中式管理。
 
-说明
-====
+INTRODUCTION
+============
 
-基础信息
--------
-    @ 标识 : dashboard
-    @ 全局引导 : 是
-    @ 必要模块 : 是
-    @ 数据迁移 : 是
+Specifications
+--------------
+    @ ID : dashboard
+    @ Bootstrap : Y
+    @ Required : Y
+    @ Migration : Y
 
-导出菜单
--------
-    * 管理员控制  
-        > 管理员列表  
-        > 新建管理员  
-        > 修改密码
+Navigation
+----------
+    * Administrator  
+        > Administrator List  
+        > Create Administrator  
+        > Reset Password
+    * Role
+        > Role List
+        > Create Role
 
-导出权限
--------
-    *  dashboard.administrator.create          > 创建管理员
-    *  dashboard.administrator.list            > 浏览管理员
-    *  dashboard.administrator.update          > 更新管理员
-    *  dashboard.administrator.delete          > 删除管理员
-    *  dashboard.administrator.reset.password  > 修改自身密码
+Permissions
+-----------
+    *  administrator.create          > Create Administrator
+    *  administrator.list            > Browser Administrators
+    *  administrator.update          > Update Administrator
+    *  administrator.delete          > Delete Administrator
+    *  administrator.reset-password  > Reset Password
     
-依赖模块
--------
+    *  role.create                   > Create Role
+    *  role.list                     > Browser Roles
+    *  role.update                   > Update Role
+    *  role.delete                   > Delete Role
+    
+Dependencies
+------------
     *
     
-
-安装
----
-    1. 将模块目录拷贝到@app/modules目录下
+Installation
+------------
+    1. Copy the module to @app/runtime/module_transfer_station
     
-    2. 在项目根目录运行指令
+    2. Run the command:
         ```
-            php yii module/update
+            php yii module/install dashboard
         ```

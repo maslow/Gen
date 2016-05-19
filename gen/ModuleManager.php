@@ -39,6 +39,15 @@ class ModuleManager
     }
 
     /**
+     * @param bool|true $returnAlias
+     * @return bool|string
+     */
+    public static function getModulesConfigFilePath($returnAlias = true)
+    {
+        return $returnAlias ? '@app/config/modules.php' : \Yii::getAlias('@app/config/modules.php');
+    }
+
+    /**
      * @param $module_id
      * @param bool|true $returnAlias
      * @return string
@@ -61,7 +70,7 @@ class ModuleManager
      */
     public static function getModuleNamespacePrefix()
     {
-        return 'app\\module';
+        return 'app\\modules';
     }
 
     /**

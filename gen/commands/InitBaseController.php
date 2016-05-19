@@ -8,7 +8,9 @@
 
 namespace app\gen\commands;
 
+use app\gen\ModuleManager;
 use yii\console\Controller;
+use yii\helpers\FileHelper;
 
 /**
  * Class InitBaseController , provides installation commands
@@ -47,7 +49,10 @@ class InitBaseController extends Controller
         if (!file_exists($targetDBPath) && !file_put_contents($targetDBPath, file_get_contents($tplDBPath)))
             return $this->stderr("ERROR: Generating {$targetDBPath} failed.");
 
-        if(!file_put_contents($targetIndexPath, file_get_contents($tplIndexPath)))
+        if (!file_put_contents($targetIndexPath, file_get_contents($tplIndexPath)))
             return $this->stderr("ERROR: Generating {$targetIndexPath} failed.");
+
+        if (!file_exists(ModuleManager::getTransferStationPath(false)))
+            return FileHelper::createDirectory(ModuleManager::getTransferStationPath(false));
     }
 }

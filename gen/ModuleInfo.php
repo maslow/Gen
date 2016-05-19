@@ -48,6 +48,14 @@ class ModuleInfo
     }
 
     /**
+     * @return bool
+     */
+    public function isBootstrap(){
+        if(!isset($this->specifications['bootstrap'])) return false;
+        return $this->specifications['bootstrap'];
+    }
+
+    /**
      * @throws Exception
      */
     public function resolveRawInfo()

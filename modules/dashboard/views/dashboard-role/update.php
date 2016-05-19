@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-11">
+            <div class="col-sm-offset-2 col-sm-10">
                 <?= Html::submitButton(Yii::t('dashboard', 'Update Role'), ['class' => 'btn btn-primary', 'name' => 'update-role']) ?>
             </div>
         </div>

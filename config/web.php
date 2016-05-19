@@ -16,7 +16,7 @@ $config = [
             'rules' => [
             ],
         ],
-        'assetManager'=>[
+        'assetManager' => [
             'bundles' => [
                 'yii\web\JqueryAsset' => [
                     'js' => [
@@ -79,10 +79,7 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
     ],
-    'modules'=>[
-        'dashboard' => [
-            'class' => 'app\modules\dashboard\Module'
-        ]
+    'modules' => [
     ],
     'params' => $params,
 ];
@@ -98,4 +95,6 @@ if (YII_ENV_DEV) {
     $config['modules']['gii']['allowedIPs'] = ['*'];
 }
 
+$config['modules'] = array_merge($config['modules'], require(__DIR__ . DIRECTORY_SEPARATOR . 'modules.php'));
+$config['bootstrap'] = array_merge($config['bootstrap'], require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php'));
 return $config;

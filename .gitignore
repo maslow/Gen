@@ -31,3 +31,7 @@ web/index.php
 config/db.php
 
 runtime/modules.php
+
+config/modules.php
+
+config/bootstrap.php
