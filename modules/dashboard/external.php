@@ -20,19 +20,17 @@ return [
     // Mark: Permissions exported
     'permissions' => [
         'administrator' => [
-            'list' => 'Browse Administrator',
-            'view' => 'View Administrator',
+            'list' => 'Browse Administrators',
             'update' => 'Update Administrator',
             'delete' => 'Delete Administrator',
             'create' => 'Create Administrator',
             'reset-password' => 'Reset Password',
         ],
         'role' => [
-            'list' => 'Browse Administrator',
-            'view' => 'View Administrator',
-            'update' => 'Update Administrator',
-            'delete' => 'Delete Administrator',
-            'create' => 'Create Administrator',
+            'list' => 'Browse Roles',
+            'update' => 'Update Role',
+            'delete' => 'Delete Role',
+            'create' => 'Create Role',
         ]
     ],
 

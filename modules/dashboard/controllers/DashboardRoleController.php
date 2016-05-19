@@ -11,6 +11,7 @@ namespace app\modules\dashboard\controllers;
 
 use app\gen\DashboardController;
 use app\gen\Event;
+use app\gen\ModuleManager;
 use app\modules\dashboard\models\Administrator;
 use app\modules\dashboard\models\CreateRoleForm;
 use app\modules\dashboard\models\UpdateRoleForm;
@@ -94,14 +95,10 @@ class DashboardRoleController extends DashboardController
             $model->data = $role->data;
         }
 
-        $permissionObjects = \Yii::$app->authManager->getPermissions();
-        $permissions = [];
-        foreach ($permissionObjects as $permission) {
-            $permissions[$permission->name] = $permission->description;
-            if (\Yii::$app->request->isGet && \Yii::$app->authManager->hasChild($role, $permission)) {
-                $model->permissions[] = $permission->name;
-            }
-        }
-        return $this->render('update', ['model' => $model, 'permissions' => $permissions]);
+        return $this->render('update', [
+            'model' => $model,
+            'role' => $role,
+            'formattedPermissions' => ModuleManager::getFormattedPermissionsFromRBAC()
+        ]);
     }
 }

@@ -200,6 +200,32 @@ class ModuleManager
     }
 
     /**
+     * @return array
+     */
+    public static function getFormattedPermissionsFromRBAC()
+    {
+        $permissions = \Yii::$app->authManager->getPermissions();
+        $formattedPermissions = [];
+        foreach ($permissions as $permission) {
+            if ($arr = self::getFormattedPermission($permission->name))
+                $formattedPermissions[$arr[0]][$arr[1]][] = $arr[2];
+            else
+                $formattedPermissions['_unknown'][] = $permission->name;
+        }
+        return $formattedPermissions;
+    }
+
+    /**
+     * @param $name
+     * @return array|bool
+     */
+    public function getFormattedPermission($name)
+    {
+        $arr = explode('.', $name, 3);
+        return count($arr) === 3 ? $arr : false;
+    }
+
+    /**
      * @param $directory string
      * @return array
      */
