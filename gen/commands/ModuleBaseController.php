@@ -14,6 +14,7 @@ use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\console\Controller;
 use yii\helpers\FileHelper;
+use yii\rbac\Permission;
 
 /**
  * Class ModuleBaseController
@@ -125,9 +126,10 @@ class ModuleBaseController extends Controller
     /**
      *
      */
-    public function actionUpdateAll(){
+    public function actionUpdateAll()
+    {
         $modules = ModuleManager::getModuleList();
-        foreach($modules as $id){
+        foreach ($modules as $id) {
             $this->actionUpdate($id);
         }
     }
@@ -165,25 +167,55 @@ class ModuleBaseController extends Controller
     }
 
     /**
-     * TODO implement
      * @param $module_id
      * @return array
      */
     private function updatePermissions($module_id)
     {
-        $oldPermissions = null;
+        $auth = \Yii::$app->authManager;
+        $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
+        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
+        $moduleInfo = ModuleManager::getModuleInfo($module_id);
+        $currentPermissions = $moduleInfo->permissions;
+        foreach ($oldPermissions as $c => $v) {
+            foreach ($v as $ak => $title) {
+                $name = "{$module_id}.{$c}.{$ak}";
+                if (false === array_key_exists($name, $currentPermissions))
+                    $auth->remove($auth->getPermission($name));
+            }
+        }
+
+        foreach ($currentPermissions as $key => $value) {
+            if (!$auth->getPermission($key))
+                $auth->add(new Permission(['name' => $key, 'description' => $value]));
+        }
         return $oldPermissions;
     }
 
     /**
-     * TODO implement
      * @param $oldPermission
      * @param $module_id
-     * @return bool
      */
     private function revertPermissions($oldPermission, $module_id)
     {
-        return true;
+        $auth = \Yii::$app->authManager;
+        $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
+        $installedPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
+        foreach ($oldPermission as $c => $v) {
+            foreach ($v as $ak => $title) {
+                $name = "{$module_id}.{$c}.{$ak}";
+                if (!$auth->getPermission($name))
+                    $auth->add(new Permission(['name' => $name, 'description' => $title]));
+            }
+        }
+
+        foreach ($installedPermissions as $c => $v) {
+            foreach ($v as $ak => $title) {
+                $name = "{$module_id}.{$c}.{$ak}";
+                if (!isset($oldPermission[$c][$ak]) || $oldPermission[$c][$ak] !== $installedPermissions[$c][$ak])
+                    $auth->remove($auth->getPermission($name));
+            }
+        }
     }
 
     /**

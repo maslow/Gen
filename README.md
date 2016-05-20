@@ -27,7 +27,7 @@ CONFIGURATION
 php yii init
 ```
 
-Alternatively : you can also use it like this, to initialize your project for development environment or production environment.
+Alternatively , you can also use it like this, to initialize your project for development environment or production environment.
 ```command
 php yii init dev
 #or

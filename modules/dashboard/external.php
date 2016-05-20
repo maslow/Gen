@@ -13,7 +13,7 @@ return [
     'specifications' => [
         'version' => '1.0.0',
         'description' => 'Dashboard module of Gen.',
-        'bootstrap' => true,
+        'bootstrap' => false,
         'dependencies' => [],
     ],
 

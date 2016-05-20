@@ -39,26 +39,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($formattedPermissions as $mk => $mv): ?>
                         <?php foreach ($mv as $ck => $cv): ?>
                             <div class="col-md-4">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <span class="text-uppercase"><?= $mk ?>/<?= $ck ?></span>
-                                    </div>
-                                    <ul class="list-group">
-                                        <?php foreach ($cv as $a): $p = Yii::$app->authManager->getPermission("{$mk}.{$ck}.{$a}") ?>
-                                            <li class="list-group-item">
-                                                <label>
-                                                    <input type="checkbox" name="UpdateRoleForm[permissions][]"
-                                                           value="<?= $p->name ?>"
-                                                        <?= Yii::$app->authManager->hasChild($role, $p) ? 'checked' : '' ?> >
-                                                    <?= $p->description ?>
-                                                </label>
-                                            </li>
-                                        <?php endforeach ?>
-                                    </ul>
-                                </div>
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <span class="text-uppercase"><?= $mk ?>/<?= $ck ?></span>
                             </div>
-                        <?php endforeach ?>
-                    <?php endforeach ?>
+                            <ul class="list-group">
+                            <?php foreach ($cv as $ak => $des): ?>
+                                <?php $p = Yii::$app->authManager->getPermission("{$mk}.{$ck}.{$ak}"); ?>
+                                <li class="list-group-item">
+                                    <label>
+                                        <input type="checkbox" name="UpdateRoleForm[permissions][]"
+                                               value="<?= $p->name ?>"
+                                            <?= Yii::$app->authManager->hasChild($role, $p) ? 'checked' : '' ?> >
+                                        <?= $p->description ?>
+                                    </label>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        </div>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="col-sm-8 col-sm-offset-2">

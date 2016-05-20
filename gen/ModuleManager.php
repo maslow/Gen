@@ -216,22 +216,13 @@ class ModuleManager
         $permissions = \Yii::$app->authManager->getPermissions();
         $formattedPermissions = [];
         foreach ($permissions as $permission) {
-            if ($arr = self::getFormattedPermission($permission->name))
-                $formattedPermissions[$arr[0]][$arr[1]][] = $arr[2];
+            $arr = explode('.', $permission->name, 3);
+            if (count($arr) === 3)
+                $formattedPermissions[$arr[0]][$arr[1]][$arr[2]] = $permission->description ;
             else
-                $formattedPermissions['_unknown'][] = $permission->name;
+                $formattedPermissions['_unknown'][$permission->name] = $permission->description ;
         }
         return $formattedPermissions;
-    }
-
-    /**
-     * @param $name
-     * @return array|bool
-     */
-    public function getFormattedPermission($name)
-    {
-        $arr = explode('.', $name, 3);
-        return count($arr) === 3 ? $arr : false;
     }
 
     /**
