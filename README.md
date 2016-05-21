@@ -7,17 +7,14 @@ Gen - Developed based Yii Framework 2.0
 REQUIREMENT
 -----------
 
->=PHP 5.4.0
+  >=PHP 5.4 (5.6 or 7.x is recommended mostly)
 
 
 INSTALLATION
 ------------
+### Clone
 
 git clone https://github.com/Maslow/Gen.git
-
-
-CONFIGURATION
--------------
 
 ### Initialize project
 
@@ -25,13 +22,6 @@ CONFIGURATION
   
 ```command
 php yii init
-```
-
-Alternatively , you can also use it like this, to initialize your project for development environment or production environment.
-```command
-php yii init dev
-#or
-php yii init prod
 ```
 
 ### Database
@@ -57,6 +47,45 @@ return [
 
 ### Install and Update the modules
 
+```command
+php yii module/update-all
+```
+
+COMMANDS INTRODUCTION
+---------------------
+### init [env]
+The init command will generate `db.php` configuration file. The value of parameter [env] would be 'dev' by default.
+```command
+php yii init
+
+```
+Alternatively , you can also use it like this, to initialize your project for development environment or production environment.
+```command
+php yii init dev
+#or
+php yii init prod
+```
+
+### module/install (module_id)
+Install the module from Module Transfer Station.
+```command
+php yii module/install your_module_id
+```
+
+### module/remove  (module_id)
+Remove the module to Module Transfer Station.
+```command
+php yii module/remove your_module_id
+```
+
+### module/update  (module_id)
+Update the permissions and migrations that might have been modified.
+```command
+php yii module/update your_module_id
+```
+
+### module/update-all
+Update all the modules, just behave like running module/update for every module.
 ```command
 php yii module/update-all
 ```
