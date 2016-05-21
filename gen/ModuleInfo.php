@@ -8,6 +8,7 @@
 
 namespace app\gen;
 
+use yii\base\BootstrapInterface;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 
@@ -50,9 +51,10 @@ class ModuleInfo
     /**
      * @return bool
      */
-    public function isBootstrap(){
-        if(!isset($this->specifications['bootstrap'])) return false;
-        return $this->specifications['bootstrap'];
+    public function isBootstrap()
+    {
+        return (new \ReflectionClass(ModuleManager::getModuleFullClassName($this->id)))
+            ->implementsInterface('\\yii\\base\\BootstrapInterface');
     }
 
     /**

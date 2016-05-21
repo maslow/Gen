@@ -50,15 +50,15 @@ class Administrator extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'username' => 'Username',
-            'password_hash' => 'Password Hash',
-            'auth_key' => 'Auth Key',
-            'locked' => 'Locked',
-            'updated_at' => 'Updated At',
-            'created_at' => 'Created At',
-            'created_ip' => 'Created Ip',
-            'created_by' => 'Created By',
+            'id' => Yii::t('dashboard','ID'),
+            'username' => Yii::t('dashboard','Username'),
+            'password_hash' => Yii::t('dashboard','Password Hash'),
+            'auth_key' => Yii::t('dashboard','Auth Key'),
+            'locked' => Yii::t('dashboard','Locked'),
+            'updated_at' => Yii::t('dashboard','Updated At'),
+            'created_at' => Yii::t('dashboard','Created At'),
+            'created_ip' => Yii::t('dashboard','Created Ip'),
+            'created_by' => Yii::t('dashboard','Created By'),
         ];
     }
 

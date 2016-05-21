@@ -174,7 +174,7 @@ class ModuleBaseController extends Controller
     {
         $auth = \Yii::$app->authManager;
         $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
-        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : [];
+        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
         $moduleInfo = ModuleManager::getModuleInfo($module_id);
         $currentPermissions = $moduleInfo->permissions;
         foreach ($oldPermissions as $c => $v) {
@@ -263,7 +263,7 @@ class ModuleBaseController extends Controller
         ],
 STR;
             if ($moduleInfo->isBootstrap())
-                $bootstrap_list_content = "'{$id}',\n";
+                $bootstrap_list_content .= "'{$id}',\n";
             $modules_content .= "\n";
         }
         $modules_content = "<?php return [\n" . $modules_content . "\n];";
