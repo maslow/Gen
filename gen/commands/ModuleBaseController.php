@@ -106,7 +106,7 @@ class ModuleBaseController extends Controller
         if (!ModuleManager::isModuleExist($module_id))
             return $this->stderr("ERROR: Module {$module_id} is not installed!\n");
 
-        $oldPermission = null;
+        $oldPermission = [];
         try {
             $moduleInfo = ModuleManager::getModuleInfo($module_id);
             $this->callHandler('beforeUpdate', $moduleInfo->handlers);
@@ -174,7 +174,7 @@ class ModuleBaseController extends Controller
     {
         $auth = \Yii::$app->authManager;
         $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
-        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
+        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : [];
         $moduleInfo = ModuleManager::getModuleInfo($module_id);
         $currentPermissions = $moduleInfo->permissions;
         foreach ($oldPermissions as $c => $v) {
@@ -200,7 +200,7 @@ class ModuleBaseController extends Controller
     {
         $auth = \Yii::$app->authManager;
         $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
-        $installedPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
+        $installedPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : [];
         foreach ($oldPermission as $c => $v) {
             foreach ($v as $ak => $title) {
                 $name = "{$module_id}.{$c}.{$ak}";

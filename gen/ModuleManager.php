@@ -219,8 +219,6 @@ class ModuleManager
             $arr = explode('.', $permission->name, 3);
             if (count($arr) === 3)
                 $formattedPermissions[$arr[0]][$arr[1]][$arr[2]] = $permission->description ;
-            else
-                $formattedPermissions['_unknown'][$permission->name] = $permission->description ;
         }
         return $formattedPermissions;
     }

@@ -9,7 +9,7 @@ $this->title = Yii::t('app','My Application in Gen');
 
         <p class="lead">You have successfully created your Gen-powered application.</p>
 
-        <p><a class="btn btn-lg btn-success" href="<?=\yii\helpers\Url::to(['/backend'])?>"><?=Yii::t('app','Getting start!')?></a></p>
+        <p><a class="btn btn-lg btn-success" href="<?=\yii\helpers\Url::to(['/dashboard'])?>"><?=Yii::t('app','Getting start!')?></a></p>
     </div>
 
     <div class="body-content">
