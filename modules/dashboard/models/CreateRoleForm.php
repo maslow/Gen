@@ -27,7 +27,7 @@ class CreateRoleForm extends Model
     {
         return [
             'name' => \Yii::t('dashboard', 'Role ID'),
-            'description' => \Yii::t('dashboard', 'Title'),
+            'description' => \Yii::t('dashboard', 'Role Name'),
             'data' => \Yii::t('dashboard', 'Remark'),
         ];
     }
@@ -47,7 +47,7 @@ class CreateRoleForm extends Model
                 Event::trigger(Module::className(), Module::EVENT_CREATE_ROLE_SUCCESS, new Event());
                 return true;
             } else {
-                $this->addError('name', \Yii::t('dashboard', 'The role name has already been exist!'));
+                $this->addError('name', \Yii::t('dashboard', 'The role name has already been exist'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_CREATE_ROLE_FAIL, new Event());

@@ -28,7 +28,7 @@ class UpdateRoleForm extends Model
     {
         return [
             'name' => \Yii::t('dashboard', 'Role ID'),
-            'description' => \Yii::t('dashboard', 'Title'),
+            'description' => \Yii::t('dashboard', 'Role Name'),
             'data' => \Yii::t('dashboard', 'Remark'),
             'permissions' => \Yii::t('dashboard', 'Permissions'),
         ];
@@ -40,8 +40,7 @@ class UpdateRoleForm extends Model
     public function save()
     {
         if ($this->validate()) {
-            $role = $this->getAuth()->getRole($this->name);
-            if ($role) {
+            if ($role = $this->getAuth()->getRole($this->name)) {
                 $role->description = $this->description;
                 $role->data = $this->data;
 
@@ -54,7 +53,7 @@ class UpdateRoleForm extends Model
                 Event::trigger(Module::className(), Module::EVENT_UPDATE_ROLE_SUCCESS, new Event());
                 return true;
             } else {
-                $this->addError('name', \Yii::t('dashboard', 'The role is not exist!'));
+                $this->addError('name', \Yii::t('dashboard', 'The role is not exist'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_UPDATE_ROLE_FAIL, new Event());

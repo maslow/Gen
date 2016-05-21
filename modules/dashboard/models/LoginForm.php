@@ -58,11 +58,11 @@ class LoginForm extends Model
                     Event::trigger(Module::className(), Module::EVENT_LOGIN_SUCCESS, $event);
                     return true;
                 } else {
-                    $this->addError('username', Yii::t('dashboard','Username and  password are incorrect!'));
+                    $this->addError('username', Yii::t('dashboard','Username and/or password are incorrect'));
                 }
             } catch (\Exception $e) {
                 Yii::error($e->getMessage());
-                $this->addError('username', Yii::t('dashboard','The user has some exceptions!'));
+                $this->addError('username', Yii::t('dashboard','Error'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_LOGIN_FAIL, $event);

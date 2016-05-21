@@ -61,7 +61,7 @@ class ResetPasswordForm extends Model
                 }
             } catch (\Exception $e) {
                 Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
-                $this->addError('password', Yii::t('dashboard', 'Error!'));
+                $this->addError('password', Yii::t('dashboard', 'Error'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_RESET_PASSWORD_FAIL);

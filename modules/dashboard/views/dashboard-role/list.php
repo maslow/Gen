@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th width="15%"><?= Yii::t('dashboard', 'Role') ?></th>
+                    <th width="15%"><?= Yii::t('dashboard', 'Role Name') ?></th>
                     <th width="15%"><?= Yii::t('dashboard', 'Role ID') ?></th>
                     <th><?= Yii::t('dashboard', 'Permissions') ?></th>
                     <th width="5%"><?= Yii::t('dashboard', 'Remark') ?></th>

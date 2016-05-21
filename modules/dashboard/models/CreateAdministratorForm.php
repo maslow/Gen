@@ -75,7 +75,7 @@ class CreateAdministratorForm extends Model
                 }
             } catch (\Exception $e) {
                 Yii::error("{$e->getMessage()} @{$e->getFile()}#Line{$e->getLine()}");
-                $this->addError('username', Yii::t('dashboard', 'Error!'));
+                $this->addError('username', Yii::t('dashboard', 'Error'));
             }
         }
         Event::trigger(Module::className(), Module::EVENT_CREATE_MANAGER_FAIL, $event);

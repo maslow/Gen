@@ -12,7 +12,7 @@ namespace app\modules\dashboard;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 
-class Module extends \yii\base\Module implements BootstrapInterface
+class Module extends \yii\base\Module
 {
     const EVENT_BEFORE_LOGIN = 'beforeLogin';
     const EVENT_LOGIN_FAIL = 'loginFail';
@@ -64,14 +64,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'httpOnly' => true
             ],
         ]);
-    }
 
-    /**
-     * Bootstrap method to be called during application bootstrap stage.
-     * @param Application $app the application currently running
-     */
-    public function bootstrap($app)
-    {
         \Yii::$app->i18n->translations['dashboard'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',

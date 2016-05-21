@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'role')->radioList($roleList) ?>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <?= Html::submitButton('Create Administrator', ['class' => 'btn btn-primary', 'name' => 'create-manager']) ?>
+                <?= Html::submitButton(Yii::t('dashboard', 'Create Administrator'), ['class' => 'btn btn-primary', 'name' => 'create-manager']) ?>
             </div>
         </div>
         <?php ActiveForm::end(); ?>

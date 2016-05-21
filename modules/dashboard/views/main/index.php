@@ -57,12 +57,12 @@ $administrator = Yii::$app->administrator;
                                 <div class="pull-left">
                                     <a href="<?= Url::to(['/dashboard/dashboard-administrator/reset-password']) ?>" target="sub-container"
                                        class="btn btn-default btn-flat">
-                                        <?= Yii::t('app', 'Reset Password') ?>
+                                        <?= Yii::t('dashboard', 'Reset Password') ?>
                                     </a>
                                 </div>
                                 <div class="pull-right">
                                     <a href="<?= Url::to(['/dashboard/main/logout']) ?>"
-                                       class="btn btn-default btn-flat"><?= Yii::t('app', 'Logout') ?></a>
+                                       class="btn btn-default btn-flat"><?= Yii::t('dashboard', 'Logout') ?></a>
                                 </div>
                             </li>
                         </ul>
@@ -83,7 +83,7 @@ $administrator = Yii::$app->administrator;
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-plus"></i>
-                            <span><?= $label ?></span>
+                            <span><?= Yii::t('dashboard',$label) ?></span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -91,7 +91,7 @@ $administrator = Yii::$app->administrator;
                                 <li>
                                     <a href="<?= Url::to($subNav['url']) ?>" target="sub-container">
                                         <i class="fa fa-eraser"></i>
-                                        <?= $subLabel ?>
+                                        <?= Yii::t('dashboard',$subLabel) ?>
                                         <i class="fa fa-angle-right pull-right"></i>
                                     </a>
                                 </li>
