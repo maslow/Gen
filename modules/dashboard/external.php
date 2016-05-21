@@ -141,7 +141,7 @@ return [
             $admin->locked = 0;
             $admin->updated_at = time();
             $admin->created_at = time();
-            $admin->created_by = 0;
+            $admin->created_by = 1;
             $admin->created_ip = "127.0.0.1";
             if ($admin->save()) {
                 $auth->removeAllAssignments();

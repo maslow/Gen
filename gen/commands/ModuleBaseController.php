@@ -110,10 +110,11 @@ class ModuleBaseController extends Controller
         try {
             $moduleInfo = ModuleManager::getModuleInfo($module_id);
             $this->callHandler('beforeUpdate', $moduleInfo->handlers);
-            $oldPermission = $this->updatePermissions($module_id);
 
             if (ModuleManager::hasMigrationFiles($module_id) && !$this->applyMigrations($module_id))
                 throw new Exception("ERROR: The execution of clearing migrations failed, please check it up and try again!");
+
+            $oldPermission = $this->updatePermissions($module_id);
             $this->generateModulesConfigFile();
             $this->callHandler('afterUpdate', $moduleInfo->handlers);
         } catch (\Exception $e) {
@@ -174,7 +175,7 @@ class ModuleBaseController extends Controller
     {
         $auth = \Yii::$app->authManager;
         $allPermissions = ModuleManager::getFormattedPermissionsFromRBAC();
-        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : null;
+        $oldPermissions = isset($allPermissions[$module_id]) ? $allPermissions[$module_id] : [];
         $moduleInfo = ModuleManager::getModuleInfo($module_id);
         $currentPermissions = $moduleInfo->permissions;
         foreach ($oldPermissions as $c => $v) {

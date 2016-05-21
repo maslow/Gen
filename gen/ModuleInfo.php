@@ -8,7 +8,6 @@
 
 namespace app\gen;
 
-use yii\base\BootstrapInterface;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 
