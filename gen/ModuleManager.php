@@ -26,7 +26,8 @@ class ModuleManager
      */
     public static function isModuleExist($module_id)
     {
-        return file_exists(self::getModuleExternalFilePath($module_id, false));
+        //return file_exists(self::getModuleExternalFilePath($module_id, false));
+        return class_exists(self::getModuleFullClassName($module_id));
     }
 
     /**
@@ -130,7 +131,7 @@ class ModuleManager
     public static function loadModuleExternalFileContent($module_id)
     {
         $path = self::getModuleExternalFilePath($module_id, false);
-        if (!file_exists($path)) throw new Exception("ERR: $path is not exist!");
+        if (!file_exists($path)) return [];
         return require($path);
     }
 
@@ -140,7 +141,7 @@ class ModuleManager
      */
     public static function getModuleInfo($module_id)
     {
-        return self::isModuleExist($module_id) ? new ModuleInfo(self::loadModuleExternalFileContent($module_id)) : null;
+        return self::isModuleExist($module_id) ? new ModuleInfo($module_id, self::loadModuleExternalFileContent($module_id)) : null;
     }
 
 

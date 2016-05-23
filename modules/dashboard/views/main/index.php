@@ -12,7 +12,7 @@
 use \yii\helpers\Url;
 
 \app\modules\dashboard\assets\AdminLTEAsset::register($this);
-/** @var  $administrator \app\modules\dashboard\models\Administrator*/
+/** @var  $administrator \app\modules\dashboard\models\Administrator */
 $administrator = Yii::$app->administrator;
 ?>
 
@@ -48,14 +48,15 @@ $administrator = Yii::$app->administrator;
                             <li class="user-header">
                                 <p>
                                     <?= $administrator->identity->username ?> -
-                                    <?= ($role = current(Yii::$app->authManager->getRolesByUser($administrator->id))) ? $role->description : '?' ?>
+                                    <?= ($role = current(Yii::$app->authManager->getRolesByUser($administrator->id))) ? Yii::t('dashboard', $role->description) : '?' ?>
                                     <small>Since <?= date('Y/m/d', $administrator->identity->created_at) ?></small>
                                 </p>
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
-                                    <a href="<?= Url::to(['/dashboard/dashboard-administrator/reset-password']) ?>" target="sub-container"
+                                    <a href="<?= Url::to(['/dashboard/dashboard-administrator/reset-password']) ?>"
+                                       target="sub-container"
                                        class="btn btn-default btn-flat">
                                         <?= Yii::t('dashboard', 'Reset Password') ?>
                                     </a>
@@ -83,7 +84,7 @@ $administrator = Yii::$app->administrator;
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-plus"></i>
-                            <span><?= Yii::t('dashboard',$label) ?></span>
+                            <span><?= Yii::t('dashboard', $label) ?></span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -91,7 +92,7 @@ $administrator = Yii::$app->administrator;
                                 <li>
                                     <a href="<?= Url::to($subNav['url']) ?>" target="sub-container">
                                         <i class="fa fa-eraser"></i>
-                                        <?= Yii::t('dashboard',$subLabel) ?>
+                                        <?= Yii::t('dashboard', $subLabel) ?>
                                         <i class="fa fa-angle-right pull-right"></i>
                                     </a>
                                 </li>

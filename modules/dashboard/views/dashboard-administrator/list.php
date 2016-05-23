@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($row) {
                         $roles = Yii::$app->authManager->getRolesByUser($row->id);
                         if ($role = current($roles)) {
-                            return $role->description;
+                            return Yii::t('dashboard',$role->description);
                         } else {
                             return '-';
                         }

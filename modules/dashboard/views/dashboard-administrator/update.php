@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $roles = Yii::$app->authManager->getRoles();
         $roleList = [];
         foreach ($roles as $role) {
-            $roleList[$role->name] = $role->description;
+            $roleList[$role->name] = Yii::t('dashboard',$role->description);
         }
         ?>
         <?= $form->field($model, 'role')->radioList($roleList) ?>

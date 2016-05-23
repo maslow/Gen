@@ -36,6 +36,8 @@ return [
     'Captcha' => '验证码',
     'Logout' => '退出登陆',
 
+    'Super Admin' => '超级管理员',
+
     'Username and/or password are incorrect' => '用户名或密码不正确',
     'The role name has already been exist' => '角色标识已存在',
     'The role is not exist' => '角色不存在'

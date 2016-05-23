@@ -38,12 +38,14 @@ class ModuleInfo
 
     /**
      * ModuleInfo constructor.
+     * @param $module_id
      * @param $info array
      * @throws Exception
      */
-    public function __construct($info)
+    public function __construct($module_id, $info)
     {
         $this->_rawInfo = $info;
+        $this->id = $module_id;
         $this->resolveRawInfo();
     }
 
@@ -61,8 +63,7 @@ class ModuleInfo
      */
     public function resolveRawInfo()
     {
-        if (self::validateRawInfo($this->_rawInfo)) {
-            $this->getIDFromRawInfo();
+        if ($this->validateRawInfo()) {
             $this->getPermissionsFromRawInfo();
             $this->getNavigationFromRawInfo();
             $this->getHandlersFromRawInfo();
@@ -73,25 +74,12 @@ class ModuleInfo
     }
 
     /**
-     * @param $rawInfo mixed
      * @return bool
+     * @internal param mixed $rawInfo
      */
-    public static function validateRawInfo($rawInfo)
+    private function validateRawInfo()
     {
-        if (!isset($rawInfo['id'])) return false;
-        if (!isset($rawInfo['specifications'])) return false;
-        if (!isset($rawInfo['permissions'])) return false;
-        if (!isset($rawInfo['navigation'])) return false;
-        if (!isset($rawInfo['handlers'])) return false;
-        return true;
-    }
-
-    /**
-     *
-     */
-    private function getIDFromRawInfo()
-    {
-        $this->id = $this->_rawInfo['id'];
+        return is_array($this->_rawInfo);
     }
 
     /**
@@ -99,7 +87,7 @@ class ModuleInfo
      */
     private function getPermissionsFromRawInfo()
     {
-        $permissions = $this->_rawInfo['permissions'];
+        $permissions = isset($this->_rawInfo['permissions']) ? $this->_rawInfo['permissions'] : [];
         foreach ($permissions as $c => $p) {
             foreach ($p as $a => $description) {
                 $name = "{$this->id}.{$c}.{$a}";
@@ -117,7 +105,7 @@ class ModuleInfo
      */
     private function getSpecificationsFromRawInfo()
     {
-        $this->specifications = $this->_rawInfo['specifications'];
+        $this->specifications = isset($this->_rawInfo['specifications']) ? $this->_rawInfo['specifications'] : [];
     }
 
     /**
@@ -125,7 +113,7 @@ class ModuleInfo
      */
     private function getNavigationFromRawInfo()
     {
-        $navigation = $this->_rawInfo['navigation'];
+        $navigation = isset($this->_rawInfo['navigation']) ? $this->_rawInfo['navigation'] : [];
         foreach ($navigation as $key => $subNavs) {
             foreach ($subNavs as $k => $subNav) {
                 // generate url filed
@@ -162,6 +150,6 @@ class ModuleInfo
      */
     private function getHandlersFromRawInfo()
     {
-        $this->handlers = $this->_rawInfo['handlers'];
+        $this->handlers = isset($this->_rawInfo['handlers']) ? $this->_rawInfo['handlers'] : [];
     }
 }// end of class definition

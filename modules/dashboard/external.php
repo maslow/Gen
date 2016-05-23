@@ -7,8 +7,6 @@
  */
 
 return [
-    'id' => 'dashboard',
-
     // Mark: Specifications of this module
     'specifications' => [
         'version' => '1.0.0',

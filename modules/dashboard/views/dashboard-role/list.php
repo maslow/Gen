@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <tbody>
                 <?php foreach ($roles as $role): ?>
                     <tr>
-                        <td><?= $role->description ?></td>
+                        <td><?= Yii::t('dashboard',$role->description) ?></td>
                         <td><?= $role->name ?></td>
                         <td>
                             <?php $ps = Yii::$app->authManager->getPermissionsByRole($role->name);
