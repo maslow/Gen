@@ -1,0 +1,15 @@
+I WANT TO ENSURE THAT LOGIN PAGE WORKS
+
+I am on page(\yii\helpers\url::to "['/dashboard/main/login'])"
+I fill field 'LoginForm[username]'," 'gen'
+I fill field 'LoginForm[password]'," '000000'
+I fill field 'LoginForm[verifyCode]'," 'testme'
+I click 'Login'
+I wait for text 'gen'
+I click 'gen'
+I see 'Logout'
+I wait "1"
+I click 'Logout'
+I wait for text 'Login'
+I wait "3"
+
