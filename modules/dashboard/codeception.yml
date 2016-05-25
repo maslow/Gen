@@ -1,4 +1,12 @@
 actor: Tester
+coverage:
+  enabled: true
+  blacklist:
+      include:
+            - assets/*
+            - views/*
+            - tests/*
+
 paths:
     tests: tests
     log: tests/_output
