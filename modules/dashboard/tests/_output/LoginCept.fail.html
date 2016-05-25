@@ -1,0 +1,43 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN"><head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-param" content="_csrf" />
+    <meta name="csrf-token" content="MTc3dm9JV0hkYVsGDAAvOmdxb0M8ChoXW0RFIzkYGjFldEA6Ki8vHQ==" />
+    <title>Login</title>
+    <link href="/assets/afea00b8/css/bootstrap.min.css" rel="stylesheet" /></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="default-login" style="padding:50px;">
+    <h1>Login</h1>
+    <p>Please fill the form to login.</p>
+    <hr />
+    <form id="login-form" class="form-horizontal" action="/index-test.php/dashboard/main/login" method="post">
+<input type="hidden" name="_csrf" value="MTc3dm9JV0hkYVsGDAAvOmdxb0M8ChoXW0RFIzkYGjFldEA6Ki8vHQ==" />
+    <div class="form-group field-loginform-username required has-success">
+<label class="col-lg-1 control-label" for="loginform-username">用户名</label>
+<div class="col-lg-3"><input type="text" id="loginform-username" class="form-control" name="LoginForm[username]" /></div>
+<div class="col-lg-8"><div class="help-block"></div></div>
+</div>    <div class="form-group field-loginform-password required has-success">
+<label class="col-lg-1 control-label" for="loginform-password">密码</label>
+<div class="col-lg-3"><input type="password" id="loginform-password" class="form-control" name="LoginForm[password]" /></div>
+<div class="col-lg-8"><div class="help-block"></div></div>
+</div>    <div class="form-group field-loginform-verifycode has-success">
+<label class="col-lg-1 control-label" for="loginform-verifycode">验证码</label>
+<div class="col-lg-3"><div class="row"><div class="col-lg-5"><img id="loginform-verifycode-image" src="/index-test.php/site/captcha?v=57454aa93837b" alt="" /></div><div class="col-lg-7"><input type="text" id="loginform-verifycode" class="form-control" name="LoginForm[verifyCode]" /></div></div></div>
+<div class="col-lg-8"><div class="help-block"></div></div>
+</div>    <div class="form-group">
+        <div class="col-lg-offset-1 col-lg-11">
+            <button type="submit" class="btn btn-primary" name="login-button">Login</button>        </div>
+    </div>
+    </form><hr />
+</div><!-- default-login -->
+<script src="/assets/acc3b02f/jquery.min.js"></script>
+<script src="/assets/80b32509/yii.js"></script>
+<script src="/assets/80b32509/yii.validation.js"></script>
+<script src="/assets/80b32509/yii.captcha.js"></script>
+<script src="/assets/80b32509/yii.activeForm.js"></script>
+<script type="text/javascript">jQuery(document).ready(function () {
+jQuery('#loginform-verifycode-image').yiiCaptcha({"refreshUrl":"\/index-test.php\/site\/captcha?refresh=1","hashKey":"yiiCaptcha\/site\/captcha"});
+jQuery('#login-form').yiiActiveForm([{"id":"loginform-username","name":"username","container":".field-loginform-username","input":"#loginform-username","validate":function (attribute, value, messages, deferred, $form) {yii.validation.required(value, messages, {"message":"用户名不能为空。"});yii.validation.string(value, messages, {"message":"用户名必须是一条字符串。","min":3,"tooShort":"用户名应该包含至少3个字符。","max":32,"tooLong":"用户名只能包含至多32个字符。","skipOnEmpty":1});}},{"id":"loginform-password","name":"password","container":".field-loginform-password","input":"#loginform-password","validate":function (attribute, value, messages, deferred, $form) {yii.validation.required(value, messages, {"message":"密码不能为空。"});yii.validation.string(value, messages, {"message":"密码必须是一条字符串。","min":3,"tooShort":"密码应该包含至少3个字符。","max":32,"tooLong":"密码只能包含至多32个字符。","skipOnEmpty":1});}},{"id":"loginform-verifycode","name":"verifyCode","container":".field-loginform-verifycode","input":"#loginform-verifycode","validate":function (attribute, value, messages, deferred, $form) {yii.validation.captcha(value, messages, {"hash":658,"hashKey":"yiiCaptcha/site/captcha","caseSensitive":false,"message":"验证码不正确。"});}}], []);
+});</script>
+
+</body></html>

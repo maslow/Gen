@@ -7,8 +7,9 @@
 class_name: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser
-        - AcceptanceHelper
+        - WebDriver
     config:
-        PhpBrowser:
-            url: 'http://localhost/myapp/'
+        WebDriver:
+            browser: chrome
+            url: 'http://localhost:8080'
+            restart: true

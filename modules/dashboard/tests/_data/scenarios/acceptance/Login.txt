@@ -1,0 +1,31 @@
+I WANT TO PERFORM LOG-IN OF DASHBOARD
+
+I am on page(\yii\helpers\url::to "['/dashboard/main/login'])"
+I see 'Login'
+I click 'Login'
+I wait for text '用户名不能为空'
+I fill field 'LoginForm[username]'," 'gen'
+I click 'Login'
+I see '密码不能为空'
+I fill field 'LoginForm[password]'," 'invalid'
+I fill field 'LoginForm[verifyCode]','testme'
+I click 'Login'
+I wait "3"
+I see '用户名或密码不正确'
+I wait "1"
+I fill field 'LoginForm[verifyCode]','invalid'
+I fill field 'LoginForm[password]','000000'
+I click 'Login'
+I wait "1"
+I see '验证码不正确'
+I fill field 'LoginForm[verifyCode]','testme'
+I wait "1"
+I click 'Login'
+I wait "3"
+I see 'gen'
+I click 'gen'
+I wait "1"
+I see '退出登陆'
+I click '退出登陆'
+I wait "3"
+

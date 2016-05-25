@@ -8,10 +8,6 @@ settings:
     bootstrap: _bootstrap.php
     colors: true
     memory_limit: 1024M
-modules:
-    config:
-        Db:
-            dsn: ''
-            user: ''
-            password: ''
-            dump: tests/_data/dump.sql
+
+config:
+    test_entry_url: http://localhost:8080/index-test.php
