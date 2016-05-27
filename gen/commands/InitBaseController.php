@@ -38,8 +38,8 @@ class InitBaseController extends Controller
     {
         if ($env !== 'dev' && $env !== 'prod') return $this->stderr("ERROR: {$env} is invalid.");
 
-        $tplIndexPath = \Yii::getAlias("@app/environments/index-{$env}.php");
-        $tplDBPath = \Yii::getAlias("@app/environments/db-{$env}.php");
+        $tplIndexPath = \Yii::getAlias("@app/gen/environments/index-{$env}.php");
+        $tplDBPath = \Yii::getAlias("@app/gen/environments/db-{$env}.php");
 
         $targetDBPath = \Yii::getAlias('@app/config/db.php');
         $targetIndexPath = \Yii::getAlias('@app/web/index.php');

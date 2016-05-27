@@ -167,7 +167,7 @@ class ModuleManager
 
             if (array_key_exists($m_id, $orderedList)) return;
 
-            $deps = self::getModuleInfo($m_id)->specifications['dependencies'];
+            $deps = self::getModuleInfo($m_id)->getDependencies();
             foreach ($deps as $d) {
                 $put($d);
             }

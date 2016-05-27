@@ -254,7 +254,7 @@ class ModuleBaseController extends Controller
     {
         $modules_content = '';
         $bootstrap_list_content = '';
-        $moduleList = ModuleManager::getModuleList();
+        $moduleList = ModuleManager::getModuleListByDependencyOrder();
         foreach ($moduleList as $id) {
             $moduleInfo = ModuleManager::getModuleInfo($id);
             $class = ModuleManager::getModuleFullClassName($id);
@@ -267,13 +267,18 @@ STR;
                 $bootstrap_list_content .= "'{$id}',\n";
             $modules_content .= "\n";
         }
-        $modules_content = "<?php return [\n" . $modules_content . "\n];";
-        $bootstrap_list_content = "<?php return [\n" . $bootstrap_list_content . "\n];";
-        file_put_contents(ModuleManager::getModulesConfigFilePath(false), $modules_content);
-        file_put_contents(
-            dirname(ModuleManager::getModulesConfigFilePath(false)) . DIRECTORY_SEPARATOR . 'bootstrap.php',
-            $bootstrap_list_content
-        );
+        $content = <<<STR
+<?php
+return [
+    'modules' => [
+$modules_content
+    ],
+    'bootstrap' => [
+        $bootstrap_list_content
+    ]
+];
+STR;
+        file_put_contents(ModuleManager::getModulesConfigFilePath(false), $content);
     }
 
     /**

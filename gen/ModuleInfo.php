@@ -58,6 +58,11 @@ class ModuleInfo
             ->implementsInterface('\\yii\\base\\BootstrapInterface');
     }
 
+    public function getDependencies()
+    {
+        return isset($this->specifications['dependencies']) ? $this->specifications['dependencies'] : [];
+    }
+
     /**
      * @throws Exception
      */

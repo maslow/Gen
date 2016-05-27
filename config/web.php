@@ -98,6 +98,8 @@ if (YII_ENV_DEV) {
     $config['modules']['gii']['allowedIPs'] = ['*'];
 }
 
-$config['modules'] = array_merge($config['modules'], require(__DIR__ . DIRECTORY_SEPARATOR . 'modules.php'));
-$config['bootstrap'] = array_merge($config['bootstrap'], require(__DIR__ . DIRECTORY_SEPARATOR . 'bootstrap.php'));
+$modulesConfig = require(__DIR__ . DIRECTORY_SEPARATOR . 'modules.php');
+$config['modules'] = array_merge($config['modules'], $modulesConfig['modules']);
+$config['bootstrap'] = array_merge($config['bootstrap'], $modulesConfig['bootstrap']);
+
 return $config;
