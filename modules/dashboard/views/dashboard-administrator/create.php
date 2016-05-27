@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             $roleList[$role->name] = Yii::t('dashboard', $role->description);
         }
         ?>
-        <?= $form->field($model, 'role')->radioList($roleList) ?>
+        <?= $form->field($model, 'role')->radioList($roleList,['style'=>'line-height: 29px;']) ?>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <?= Html::submitButton(Yii::t('dashboard', 'Create Administrator'), ['class' => 'btn btn-primary', 'name' => 'create-manager']) ?>
