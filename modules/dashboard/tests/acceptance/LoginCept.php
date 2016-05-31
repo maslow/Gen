@@ -1,6 +1,7 @@
 <?php 
 $I = new AcceptanceTester($scenario);
 $I->wantTo('perform log-in of dashboard');
+$I->resizeWindow(1240,800);
 $I->amOnPage(\yii\helpers\Url::to(['/dashboard/main/login']));
 $I->see('Please fill the form to login.');
 

@@ -28,7 +28,7 @@ class m160511_084521_create_administrator extends Migration
             'created_at' => $this->integer()->notNull(),
             'created_ip' => $this->string(16)->notNull(),
             'created_by' => $this->integer()->notNull()
-        ]);
+        ], $tableOptions);
     }
 
     /**
