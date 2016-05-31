@@ -84,7 +84,7 @@ class MainController extends Controller
             foreach ($moduleInfo->navigation as $key => $subNavs) {
                 $this->filterNavigation($subNavs);
                 if (count($subNavs))
-                    $navigationList[$key] = $subNavs;
+                    $navigationList[$module_id][$key] = $subNavs;
             }
         }
         return $navigationList;

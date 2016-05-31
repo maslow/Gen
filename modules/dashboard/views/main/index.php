@@ -80,25 +80,29 @@ $administrator = Yii::$app->administrator;
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu">
                 <li class="header"></li>
-                <?php foreach ($navigationList as $label => $navigation): ?>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-plus"></i>
-                            <span><?= Yii::t('dashboard', $label) ?></span>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <?php foreach ($navigation as $subLabel => $subNav): ?>
-                                <li>
-                                    <a href="<?= Url::to($subNav['url']) ?>" target="sub-container">
-                                        <i class="fa fa-eraser"></i>
-                                        <?= Yii::t('dashboard', $subLabel) ?>
-                                        <i class="fa fa-angle-right pull-right"></i>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </li>
+                <?php foreach ($navigationList as $module_id => $moduleNavigationList): ?>
+                    <?php foreach ($moduleNavigationList as $label => $navigation): ?>
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-plus"></i>
+                                <span>
+                                    <?= isset(Yii::$app->i18n->translations[$module_id]) ? Yii::t($module_id, $label) : $label ?>
+                                </span>
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </a>
+                            <ul class="treeview-menu">
+                                <?php foreach ($navigation as $subLabel => $subNav): ?>
+                                    <li>
+                                        <a href="<?= Url::to($subNav['url']) ?>" target="sub-container">
+                                            <i class="fa fa-eraser"></i>
+                                            <?= isset(Yii::$app->i18n->translations[$module_id]) ? Yii::t($module_id, $subLabel) : $subLabel ?>
+                                            <i class="fa fa-angle-right pull-right"></i>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
             </ul>
             <!-- /.sidebar-menu -->
