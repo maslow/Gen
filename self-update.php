@@ -121,7 +121,7 @@ function update_dashboard()
     $new_files = get_new_files(download_path . '/modules/dashboard', dashboard_path);
     foreach ($new_files as $f) {
         if (copy(download_path . '/modules/dashboard/' . $f, dashboard_path . DS . $f))
-            echo download_path . '/modules/dashboard/' . $f . " => " . dashboard_path . DS . $f;
+            echo download_path . '/modules/dashboard/' . $f . " => " . dashboard_path . DS . $f . "\n";
     }
 
 }
