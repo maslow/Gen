@@ -31,6 +31,7 @@ class DashboardAdministratorController extends DashboardController
             'list' => 'administrator.list',
             'create' => 'administrator.create',
             'update' => 'administrator.update',
+            'delete' => 'administrator.delete',
             'reset-password' => 'administrator.reset-password',
         ];
     }

@@ -22,7 +22,12 @@ class DashboardRoleController extends DashboardController
 {
     public function accessControl()
     {
-        return [];
+        return [
+            'list' => 'role.list',
+            'create' => 'role.create',
+            'update' => 'role.update',
+            'delete' => 'role.delete',
+        ];
     }
 
     public function actionList(){
