@@ -7,9 +7,10 @@
  */
 
 const DS = DIRECTORY_SEPARATOR;
-const gen_path = __DIR__ . DS . 'gen';
-const download_path = __DIR__ . DS . 'runtime/.gen';
-const backup_path = __DIR__ . DS . 'runtime/.gen_backup';
+const gen_path = __DIR__ . '/gen';
+const dashboard_path = __DIR__ . '/modules/dashboard';
+const download_path = __DIR__ . '/runtime/.gen';
+const backup_path = __DIR__ . '/runtime/.gen_backup';
 
 if (!file_exists(download_path)) mkdir(download_path);
 if (!file_exists(backup_path)) mkdir(backup_path);
@@ -22,17 +23,17 @@ function get_files_data($files, $base_path)
     return $files_data;
 }
 
-function get_new_files()
+function get_new_files($download, $old)
 {
     $files = [];
-    $new_data = get_files_data(get_sub_files(download_path . DS . 'gen'), download_path . DS . 'gen');
-    $old_data = get_files_data(get_sub_files(gen_path), gen_path);
+    $new_data = get_files_data(get_sub_files($download), $download);
+    $old_data = get_files_data(get_sub_files($old), $old);
 
     foreach ($old_data as $f => $hash) {
         if (isset($new_data[$f]) && $old_data[$f] !== $new_data[$f])
             $files [] = $f;
     }
-    return array_merge($files, array_diff(get_sub_files(download_path . DS . 'gen'), get_sub_files(gen_path)));
+    return array_merge($files, array_diff(get_sub_files(download_path . '/gen'), get_sub_files(gen_path)));
 }
 
 function get_sub_files($directory)
@@ -91,29 +92,54 @@ function clear_backup()
 
 function backup_gen()
 {
-    return recurse_copy(gen_path, backup_path . DS . 'gen');
+    recurse_copy(gen_path, backup_path . '/gen');
+}
+
+function backup_dashboard()
+{
+    recurse_copy(dashboard_path, backup_path . '/dashboard');
 }
 
 function update_gen()
 {
-    clear_downloaded();
-    download_gen();
-    if (!file_exists(download_path . DS . 'gen'))
-        throw new \Exception('Download gen failed');
-
-    $current_files = get_sub_files(gen_path);
-    $download_files = get_sub_files(download_path . DS . 'gen');
 
     clear_backup();
     backup_gen();
 
-    $new_files = get_new_files();
-    foreach ($new_files as $f){
-        if(copy(download_path . DS . 'gen' . DS . $f, gen_path . DS . $f))
-            echo download_path . DS . 'gen' . DS . $f ." => " .gen_path . DS . $f;
+    $new_files = get_new_files(download_path . '/gen', gen_path);
+    foreach ($new_files as $f) {
+        if (copy(download_path . '/gen/' . $f, gen_path . DS . $f))
+            echo download_path . '/gen/' . $f . " => " . gen_path . DS . $f;
     }
+}
+
+function update_dashboard()
+{
+    clear_backup();
+    backup_dashboard();
+
+    $new_files = get_new_files(download_path . '/modules/dashboard', dashboard_path);
+    foreach ($new_files as $f) {
+        if (copy(download_path . '//modules/dashboard/' . $f, dashboard_path . DS . $f))
+            echo download_path . '//modules/dashboard/' . $f . " => " . dashboard_path . DS . $f;
+    }
+
+}
+
+function main()
+{
+    clear_downloaded();
+    download_gen();
+
+    if (!file_exists(download_path . '/gen'))
+        throw new \Exception('Download gen failed');
+
+
+    update_gen();
+
+    update_dashboard();
 
     clear_downloaded();
 }
 
-update_gen();
+main();
