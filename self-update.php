@@ -33,7 +33,7 @@ function get_new_files($download, $old)
         if (isset($new_data[$f]) && $old_data[$f] !== $new_data[$f])
             $files [] = $f;
     }
-    return array_merge($files, array_diff(get_sub_files(download_path . '/gen'), get_sub_files(gen_path)));
+    return array_merge($files, array_diff(get_sub_files($download), get_sub_files($old)));
 }
 
 function get_sub_files($directory)
@@ -59,10 +59,10 @@ function recurse_copy($src, $dst)
     mkdir($dst);
     while (false !== ($file = readdir($dir))) {
         if (($file != '.') && ($file != '..')) {
-            if (is_dir($src . '/' . $file)) {
-                recurse_copy($src . '/' . $file, $dst . '/' . $file);
+            if (is_dir($src . DS . $file)) {
+                recurse_copy($src . DS . $file, $dst . DS . $file);
             } else {
-                copy($src . '/' . $file, $dst . '/' . $file);
+                copy($src . DS . $file, $dst . DS . $file);
             }
         }
     }
@@ -77,7 +77,7 @@ function del_dir($dir)
 
 function download_gen()
 {
-    return system("git clone https://git.coding.net/maslow/Gen.git " . download_path);
+    return system("git clone https://github.com/Maslow/Gen.git " . download_path);
 }
 
 function clear_downloaded()
@@ -87,7 +87,7 @@ function clear_downloaded()
 
 function clear_backup()
 {
-    del_dir(backup_path . DS . "*");
+    del_dir(backup_path . "/*");
 }
 
 function backup_gen()
@@ -120,8 +120,8 @@ function update_dashboard()
 
     $new_files = get_new_files(download_path . '/modules/dashboard', dashboard_path);
     foreach ($new_files as $f) {
-        if (copy(download_path . '//modules/dashboard/' . $f, dashboard_path . DS . $f))
-            echo download_path . '//modules/dashboard/' . $f . " => " . dashboard_path . DS . $f;
+        if (copy(download_path . '/modules/dashboard/' . $f, dashboard_path . DS . $f))
+            echo download_path . '/modules/dashboard/' . $f . " => " . dashboard_path . DS . $f;
     }
 
 }
