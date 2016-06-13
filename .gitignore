@@ -31,3 +31,5 @@ web/index.php
 config/db.php
 
 config/modules.php
+
+.git
