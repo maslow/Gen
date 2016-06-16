@@ -15,7 +15,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'enableStrictParsing' => false,
-            'showScriptName' => true,
+            'showScriptName' => false,
             'rules' => [
             ],
         ],
@@ -46,7 +46,6 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

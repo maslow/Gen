@@ -2,6 +2,9 @@ Options +FollowSymLinks
 RewriteEngine on
 
 # if a directory or a file exists, use it directly
+
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
