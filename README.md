@@ -7,7 +7,7 @@ Gen - Developed based Yii Framework 2.0
 REQUIREMENT
 -----------
 
-  >=PHP 5.4 (5.6 or 7.x is recommended mostly)
+  equal or greater than PHP 5.4 (5.6 or 7.x is recommended mostly)
 
 
 INSTALLATION
@@ -93,7 +93,7 @@ php yii module/update-all
 OTHERWISE
 ---------
 
-Dashboard URL:  http://localhost/gen/web/index.php/dashboard
+Dashboard URL:  http://localhost/gen/web/dashboard
 
   
  

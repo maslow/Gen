@@ -25,7 +25,7 @@
         <button class="btn btn-default" ng-click="create()">
             <span class="fa fa-plus"> Create a Role</span>
         </button>
-        <hr />
+        <hr/>
         <table class="table table-striped table-bordered table-hover table-responsive">
             <thead>
             <tr>
@@ -39,7 +39,7 @@
             <tr ng-repeat="r in roles">
                 <td><span ng-bind="r.name"></span></td>
                 <td><span ng-bind="r.description"></span></td>
-                <td><span ng-bind="r.createdAt | date"></span></td>
+                <td><span ng-bind="r.createdAt"></span></td>
                 <td>
                     <span class="btn fa fa-edit" ng-click="update(r)"></span>
                     <span class="btn fa fa-trash" ng-click="remove(r)"></span>
@@ -97,7 +97,7 @@
         $scope.load();
 
         // Create Data
-        $scope.create = function(){
+        $scope.create = function () {
             $scope.role = {name: '', description: ''};
             $scope.isCreate = true;
             dlg = layer.open({
@@ -153,6 +153,10 @@
                         layer.close(dlg);
                         layer.msg('Successfully');
                         $scope.load();
+                    })
+                    .error(function (res, text) {
+                        var data = res.responseJSON;
+                        layer.msg(data.message);
                     });
         };
     });

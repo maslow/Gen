@@ -3,7 +3,7 @@
  */
 
 var Config = {
-    api_url: 'http://localhost/php/gen/web',
+    api_url: 'http://localhost/php/gen/web/api',
     login_url: 'login.html'
 };
 
