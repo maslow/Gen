@@ -1,0 +1,33 @@
+[
+  {
+    "module": "Blog",
+    "links": [
+      {
+        "label": "Posts",
+        "url": "blog/index.html"
+      }
+    ]
+  },
+  {
+    "module": "Admin",
+    "links": [
+      {
+        "label": "Administrators",
+        "url": "admin/administrators.html"
+      }
+    ]
+  },
+  {
+    "module": "RBAC",
+    "links": [
+      {
+        "label": "Roles",
+        "url": "rbac/roles.html"
+      },
+      {
+        "label": "Create Role",
+        "url": "rbac/create.html"
+      }
+    ]
+  }
+]

@@ -44,7 +44,7 @@ class ModuleBaseController extends Controller
             $this->callHandler('beforeInstall', $moduleInfo->handlers);
 
             if (ModuleManager::hasMigrationFiles($module_id) && !$this->applyMigrations($module_id))
-                throw new Exception("ERROR: The execution of migrate/up failed, please check it up and try again!");
+                throw new Exception("ERROR: The execution of migrate/up failed, please check it up and try again!\n");
 
             $this->installPermissions($moduleInfo->permissions);
             $this->generateModulesConfigFile();
@@ -129,7 +129,7 @@ class ModuleBaseController extends Controller
      */
     public function actionUpdateAll()
     {
-        $modules = ModuleManager::getModuleList();
+        $modules = ModuleManager::getModuleListByDependencyOrder();
         foreach ($modules as $id) {
             $this->actionUpdate($id);
         }
@@ -142,11 +142,19 @@ class ModuleBaseController extends Controller
     private function installPermissions($permissions)
     {
         $auth = \Yii::$app->authManager;
-        foreach ($permissions as $name => $description) {
-            if (!$auth->getPermission($name)) {
-                $p = $auth->createPermission($name);
-                $p->description = $description;
-                if (!$auth->add($p))
+        foreach ($permissions as $p) {
+            if (!$auth->getPermission($p['name'])) {
+                $permission = $auth->createPermission($p['name']);
+                $permission->description = $p['description'];
+                if (isset($p['ruleClass'])) {
+                    /** @var \yii\rbac\Rule $rule */
+                    $rule = new $p['ruleClass'];
+                    if (!$auth->getRule($rule->name))
+                        $auth->add($rule);
+
+                    $permission->ruleName = $rule->name;
+                }
+                if (!$auth->add($permission))
                     throw new InvalidConfigException('Error in adding permission to auth system！' . __METHOD__);
             }
         }
@@ -159,9 +167,12 @@ class ModuleBaseController extends Controller
     private function removePermissions($permissions)
     {
         $auth = \Yii::$app->authManager;
-        foreach ($permissions as $name => $description) {
-            if ($p = $auth->getPermission($name)) {
-                if (!$auth->remove($p))
+        foreach ($permissions as $p) {
+            if ($permission = $auth->getPermission($p['name'])) {
+                if ($rule = $auth->getRule($permission->ruleName)) {
+                    $auth->remove($rule);
+                }
+                if (!$auth->remove($permission))
                     throw new InvalidConfigException('Error in removing permission from auth system！' . __METHOD__);
             }
         }
@@ -181,14 +192,25 @@ class ModuleBaseController extends Controller
         foreach ($oldPermissions as $c => $v) {
             foreach ($v as $ak => $title) {
                 $name = "{$module_id}.{$c}.{$ak}";
-                if (false === array_key_exists($name, $currentPermissions))
+                if (false === array_key_exists($name, array_flip(array_column($currentPermissions, 'name'))))
                     $auth->remove($auth->getPermission($name));
             }
         }
 
-        foreach ($currentPermissions as $key => $value) {
-            if (!$auth->getPermission($key))
-                $auth->add(new Permission(['name' => $key, 'description' => $value]));
+        foreach ($currentPermissions as $p) {
+            if (!$auth->getPermission($p['name'])) {
+                $permission = $auth->createPermission($p['name']);
+                $permission->description = $p['description'];
+                if (isset($p['ruleClass'])) {
+                    /** @var \yii\rbac\Rule $rule */
+                    $rule = new $p['ruleClass'];
+                    if (!$auth->getRule($rule->name))
+                        $auth->add($rule);
+
+                    $permission->ruleName = $rule->name;
+                }
+                $auth->add($permission);
+            }
         }
         return $oldPermissions;
     }
@@ -223,7 +245,8 @@ class ModuleBaseController extends Controller
      * @param $module_id
      * @return bool
      */
-    private function applyMigrations($module_id)
+    private
+    function applyMigrations($module_id)
     {
         $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
         $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
@@ -237,7 +260,8 @@ class ModuleBaseController extends Controller
      * @param $module_id
      * @return bool
      */
-    private function revertMigrations($module_id)
+    private
+    function revertMigrations($module_id)
     {
         $migrationPath = ModuleManager::getModuleMigrationRootPath($module_id);
         $migrationTable = ModuleManager::getModuleMigrationTableName($module_id);
@@ -250,7 +274,8 @@ class ModuleBaseController extends Controller
     /**
      * @return int
      */
-    private function generateModulesConfigFile()
+    private
+    function generateModulesConfigFile()
     {
         $modules_content = '';
         $bootstrap_list_content = '';
@@ -286,7 +311,8 @@ STR;
      * @param $handlers
      * @throws Exception
      */
-    private function callHandler($handlerName, $handlers)
+    private
+    function callHandler($handlerName, $handlers)
     {
         if ($handlers && isset($handlers[$handlerName]) && is_callable($handlers[$handlerName])) {
             if (false === $handlers[$handlerName]()) {
@@ -298,7 +324,8 @@ STR;
     /**
      * @throws Exception
      */
-    private function createModuleTransferStation()
+    private
+    function createModuleTransferStation()
     {
         if (!file_exists(ModuleManager::getTransferStationPath(false)))
             FileHelper::createDirectory(ModuleManager::getTransferStationPath(false));

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Home</title>
+
+    <!-- Font-awesome CSS File -->
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css"/>
+    <!-- Twitter Bootstrap 3 CSS File -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <!-- AdminLTE CSS Files -->
+    <link rel="stylesheet" href="node_modules/admin-lte/dist/css/AdminLTE.min.css"/>
+    <link rel="stylesheet" href="node_modules/admin-lte/dist/css/skins/skin-blue.min.css"/>
+
+    <!-- jQuery JS File -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!-- Angular JS File -->
+    <script src="node_modules/angular/angular.min.js"></script>
+    <!-- Twitter Bootstrap 3 JS File -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- AdminLTE JS File -->
+    <script src="node_modules/admin-lte/dist/js/app.min.js"></script>
+
+    <!-- App JS Files -->
+    <script src="lib.js"></script>
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini" ng-app="gen">
+
+<div class="wrapper" ng-controller="MainCtrl">
+    <!-- Main Header -->
+    <header class="main-header">
+
+        <!-- Logo -->
+        <a href="" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini"><b>G</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">Ge<b>n</b></span>
+        </a>
+
+        <!-- Header Navbar -->
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas"></a>
+            <!-- Navbar Right Menu -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <!-- User Menu -->
+                    <li class="dropdown user user-menu">
+                        <!-- Menu Toggle Button -->
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-user"></i>
+                            <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                            <span class="hidden-xs" ng-bind="username"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- The user image in the menu -->
+                            <li class="user-header">
+                                <p>
+                                    <span ng-bind="username"></span> -
+                                    Role Name
+                                    <small>Since 2016</small>
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#"
+                                       target="sub-container"
+                                       class="btn btn-default btn-flat">
+                                        Reset Password
+                                    </a>
+                                </div>
+                                <div class="pull-right">
+                                    <a ng-click="logout()"
+                                       class="btn btn-default btn-flat">Logout</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <section class="sidebar">
+
+            <!-- Sidebar Menu -->
+            <ul class="sidebar-menu">
+                <li class="header"></li>
+                <li class="treeview" ng-repeat="nav in navigation">
+                    <a href="#">
+                        <i class="fa fa-plus"></i>
+                        <span ng-bind="nav.module"></span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li ng-repeat="link in nav.links" onclick="loadPage(this)">
+                            <a href="{{link.url}}" target="sub-container">
+                                <i class="fa fa-eraser"></i>
+                                {{link.label}}
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- /.sidebar-menu -->
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <!-- Main content -->
+        <section class="content">
+            <!-- Your Page Content Here -->
+            <iframe src="welcome.html" name="sub-container" id="iframe-page" allowTransparency="true"
+                    frameborder="0" scrolling="auto" style="width: 100%">
+            </iframe>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    !-- Main Footer -->
+    <footer class="main-footer">
+        <!-- To the right -->
+        <div class="pull-right hidden-xs">
+            Powered by Ge<b>n</b>
+        </div>
+        <!-- Default to the left -->
+        <strong>Copyright &copy; 2016 <a href="#">Ge<b>n</b></a>.</strong> All rights reserved.
+    </footer>
+
+</div>
+
+<!-- Scripts -->
+
+<script>
+    Identity.loginRequired();
+
+    var app = angular.module('gen', []);
+    app.controller('MainCtrl', function ($scope, $http) {
+        var uid = Identity.getUserId();
+        API.call({
+            url: '/administrators/' + uid,
+            method: 'GET'
+        }).success(function (res, status) {
+            $scope.username = res.username;
+            $scope.$apply();
+        });
+
+        $http.get('navigation.json').success(function (data) {
+            $scope.navigation = data;
+        });
+
+        // Logout
+        $scope.logout = function () {
+            Identity.clear();
+            Identity.loginRequired();
+        };
+    });
+
+    function loadPage(t) {
+        $(t).addClass('active').siblings().removeClass('active');
+    }
+
+    $('#iframe-page').load(function () {
+        $(this).height(window.innerHeight);
+    });
+
+</script>
+</body>
+</html>

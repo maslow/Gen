@@ -30,6 +30,9 @@ class ModuleInfo
     /** @var  array */
     public $permissions = [];
 
+    /** @var array */
+    public $ACL = [];
+
     /** @var  array */
     public $navigation = [];
 
@@ -58,6 +61,9 @@ class ModuleInfo
             ->implementsInterface('\\yii\\base\\BootstrapInterface');
     }
 
+    /**
+     * @return array
+     */
     public function getDependencies()
     {
         return isset($this->specifications['dependencies']) ? $this->specifications['dependencies'] : [];
@@ -66,13 +72,13 @@ class ModuleInfo
     /**
      * @throws Exception
      */
-    public function resolveRawInfo()
+    private function resolveRawInfo()
     {
         if ($this->validateRawInfo()) {
-            $this->getPermissionsFromRawInfo();
             $this->getNavigationFromRawInfo();
             $this->getHandlersFromRawInfo();
             $this->getSpecificationsFromRawInfo();
+            $this->getACLFromRawInfo();
         } else {
             throw new Exception("The raw info of module is invalid.");
         }
@@ -88,19 +94,27 @@ class ModuleInfo
     }
 
     /**
-     * @throws InvalidConfigException
+     *
      */
-    private function getPermissionsFromRawInfo()
+    private function getACLFromRawInfo()
     {
-        $permissions = isset($this->_rawInfo['permissions']) ? $this->_rawInfo['permissions'] : [];
-        foreach ($permissions as $c => $p) {
-            foreach ($p as $a => $description) {
-                $name = "{$this->id}.{$c}.{$a}";
-                if (is_string($description)) {
-                    $this->permissions[$name] = $description;
-                } else {
-                    throw new InvalidConfigException("The format of {$name} is invalid.");
-                }
+        $acl = isset($this->_rawInfo['ACL']) ? $this->_rawInfo['ACL'] : [];
+        foreach ($acl as $ctrl => $acts) {
+            foreach ($acts as $act => $permissions) {
+                $apiName = "{$this->id}.{$ctrl}.{$act}";
+                if (is_string($permissions))
+                    $this->ACL[$apiName] = $permissions;
+
+                if (is_array($permissions))
+                    foreach ($permissions as $k => $v) {
+                        if (is_integer($k)) {
+                            $this->ACL[$apiName][] = "$apiName#$v";
+                            $this->permissions[] = ['name' => "$apiName#$v", 'description' => $v];
+                        } elseif (is_string($k)) {
+                            $this->ACL[$apiName][] = "$apiName#$k";
+                            $this->permissions[] = ['name' => "$apiName#$k", 'description' => $k, 'ruleClass' => $v];
+                        }
+                    }
             }
         }
     }
@@ -157,4 +171,5 @@ class ModuleInfo
     {
         $this->handlers = isset($this->_rawInfo['handlers']) ? $this->_rawInfo['handlers'] : [];
     }
+
 }// end of class definition

@@ -1,0 +1,21 @@
+{
+  "name": "dashboard",
+  "description": "dashboard",
+  "main": "index.js",
+  "authors": [
+    "maslow <wangfugen@126.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "layer": "*"
+  }
+}

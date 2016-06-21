@@ -165,7 +165,8 @@ class ModuleManager
             if ($i++ > self::MAX_CALL_DEPTH)
                 throw new InvalidConfigException("The 'dependencies' config of modules may have dead cycle!");
 
-            if (array_key_exists($m_id, $orderedList)) return;
+            $flipList = array_flip($orderedList);
+            if (array_key_exists($m_id, $flipList)) return;
 
             $deps = self::getModuleInfo($m_id)->getDependencies();
             foreach ($deps as $d) {

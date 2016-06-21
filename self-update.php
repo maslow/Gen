@@ -8,7 +8,6 @@
 
 const DS = DIRECTORY_SEPARATOR;
 const gen_path = __DIR__ . '/gen';
-const dashboard_path = __DIR__ . '/modules/dashboard';
 const download_path = __DIR__ . '/runtime/.gen';
 const backup_path = __DIR__ . '/runtime/.gen_backup';
 
@@ -95,11 +94,6 @@ function backup_gen()
     recurse_copy(gen_path, backup_path . '/gen');
 }
 
-function backup_dashboard()
-{
-    recurse_copy(dashboard_path, backup_path . '/dashboard');
-}
-
 function update_gen()
 {
 
@@ -113,19 +107,6 @@ function update_gen()
     }
 }
 
-function update_dashboard()
-{
-    clear_backup();
-    backup_dashboard();
-
-    $new_files = get_new_files(download_path . '/modules/dashboard', dashboard_path);
-    foreach ($new_files as $f) {
-        if (copy(download_path . '/modules/dashboard/' . $f, dashboard_path . DS . $f))
-            echo download_path . '/modules/dashboard/' . $f . " => " . dashboard_path . DS . $f . "\n";
-    }
-
-}
-
 function main()
 {
     clear_downloaded();
@@ -136,8 +117,6 @@ function main()
 
 
     update_gen();
-
-    update_dashboard();
 
     clear_downloaded();
 }
