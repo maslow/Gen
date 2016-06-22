@@ -66,7 +66,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
                     'Origin' => ['*'],
                     'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                     'Access-Control-Request-Headers' => ['*'],
-                    'Access-Control-Allow-Credentials' => true,  // ???
+                    'Access-Control-Allow-Credentials' => true,
                     'Access-Control-Max-Age' => 86400,
                     'Access-Control-Expose-Headers' => [
                         'X-Pagination-Total-Count',
@@ -87,8 +87,10 @@ class Module extends \yii\base\Module implements BootstrapInterface
                     if (\Yii::$app->user->can($p))
                         $can = true;
                 }
-                if (false === $can)
+                if (false === $can){
+                    \Yii::$app->response->headers->set('Access-Control-Allow-Origin', '*');
                     throw new ForbiddenHttpException('The authenticated user is not allowed to access the specified API endpoint');
+                }
             });
         });
     }

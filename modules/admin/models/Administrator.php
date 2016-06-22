@@ -66,6 +66,14 @@ class Administrator extends \yii\db\ActiveRecord
         return $this->hasOne(U::className(), ['id' => 'uid']);
     }
 
+    /**
+     * @return \yii\rbac\Role[]
+     */
+    public function getRole(){
+        $roles = Yii::$app->authManager->getRolesByUser($this->uid);
+        return array_values($roles)[0];
+    }
+
     public function fields()
     {
         return [
@@ -74,6 +82,7 @@ class Administrator extends \yii\db\ActiveRecord
             'created_at',
             'created_ip',
             'created_by',
+            'role'
         ];
     }
 

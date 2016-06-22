@@ -144,6 +144,10 @@
                         .success(function (data, status) {
                             layer.msg('Successfully');
                             dg.datagrid('reload');
+                        })
+                        .error(function (res) {
+                            layer.close(layer_dlg);
+                            layer.msg(res.statusText, {icon: 5, shift: 6});
                         });
             });
         }
@@ -160,11 +164,11 @@
                 })
                 .error(function (res, text, e) {
                     var data = res.responseJSON;
-                    Debug.log(data);
+                    layer.close(layer_dlg);
+                    layer.msg(data.message,{icon: 5, shift: 6});
                 });
         return false;
     });
 </script>
-
 </body>
 </html>

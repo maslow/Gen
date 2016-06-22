@@ -50,34 +50,50 @@
     </div>
 </div>
 
-<div id="form_dlg" style="padding: 50px;display:none">
+<div id="form_dlg" style="padding: 30px;display:none">
     <form class="form-horizontal">
         <div class="form-group">
-            <label class="col-sm-2 control-label">Name</label>
+            <label class="col-sm-3 control-label">Name</label>
 
-            <div class="col-sm-6">
+            <div class="col-sm-9">
                 <input ng-model="role.name" name="name" type="text" class="form-control" ng-show="isCreate">
                 <label ng-bind="role.name" name="name" type="text" class="form-control" ng-hide="isCreate"></label>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">Label</label>
+            <label class="col-sm-3 control-label">Label</label>
 
-            <div class="col-sm-6">
+            <div class="col-sm-9">
                 <input ng-model="role.description" name="description" type="text" class="form-control">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">Permissions</label>
+            <label class="col-sm-3 control-label">Permissions</label>
 
-            <div class="col-sm-6">
-                <div ng-repeat="p in allPermissions">
-                    <input type="checkbox" ng-model="role.permissions[p.name]"/>{{p.description}}
+            <div class="col-sm-9">
+                <div ng-repeat="(k, v) in allPermissions">
+                    <div class="row" ng-repeat="(kk,vv) in v">
+                        <span class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">{{k}} | {{kk}}</div>
+                                <ul class="list-group">
+                                    <li class="list-group-item" ng-repeat="(kkk,vvv) in vv">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-model="role.permissions[k+'.'+kk+'.'+kkk]"/>
+                                                <span ng-bind="vvv"></span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="col-sm-offset-3 col-sm-9">
                 <button type="button" ng-click="save()" class="btn btn-default">Submit</button>
             </div>
         </div>
@@ -114,6 +130,7 @@
             API.call({url: '/permissions', method: 'get'})
                     .success(function (data, status) {
                         $scope.allPermissions = data;
+                        Debug.log(data);
                         $scope.$apply();
                     });
         };
@@ -131,7 +148,7 @@
                 title: 'Create',
                 type: 1,
                 skin: 'layui-layer-rim',
-                area: '600px',
+                area: '500px',
                 shadeClose: true,
                 content: $("#form_dlg")
             });
@@ -148,7 +165,6 @@
             $scope.role.permissions = [];
             API.call({url: '/roles/' + r.name, method: 'get'})
                     .success(function (data, status) {
-                        console.log(data);
                         for (var i = 0; i < data.permissions.length; i++) {
                             var name = data.permissions[i].name;
                             $scope.role.permissions[name] = true;
@@ -160,7 +176,7 @@
                 title: 'Update',
                 type: 1,
                 skin: 'layui-layer-rim',
-                area: '600px',
+                area: '500px',
                 shadeClose: true,
                 content: $("#form_dlg")
             });
@@ -186,7 +202,7 @@
         $scope.save = function () {
             var p = '';
             for (var x in $scope.role.permissions) {
-                if($scope.role.permissions[x] == true)
+                if ($scope.role.permissions[x] == true)
                     p = p + x + ',';
             }
             console.log(p);

@@ -16,7 +16,23 @@ return [
         ],
     ],
 
-    // Mark: Navigation configuration
+    // Mark: ACL exported
+    'ACL' => [
+        'administrator' => [
+            'view' => [
+                'viewAdministrator'
+            ],
+            'update' => [
+                'updateAdministrator'
+            ],
+            'index' => [
+                'indexAdministrators'
+            ],
+            'delete' => [
+                'deleteAdministrator'
+            ],
+        ],
+    ],
 
     // Mark: handlers
     'handlers' => [

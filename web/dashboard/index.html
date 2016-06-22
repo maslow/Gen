@@ -60,7 +60,7 @@
                             <li class="user-header">
                                 <p>
                                     <span ng-bind="username"></span> -
-                                    Role Name
+                                    {{role.description}}
                                     <small>Since 2016</small>
                                 </p>
                             </li>
@@ -148,11 +148,13 @@
     var app = angular.module('gen', []);
     app.controller('MainCtrl', function ($scope, $http) {
         var uid = Identity.getUserId();
+
         API.call({
             url: '/administrators/' + uid,
             method: 'GET'
         }).success(function (res, status) {
             $scope.username = res.username;
+            $scope.role = res.role;
             $scope.$apply();
         });
 

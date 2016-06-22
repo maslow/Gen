@@ -14,6 +14,27 @@ return [
     ],
 
     // Mark: ACL exported
+    'ACL' => [
+        'role' => [
+            'view' => [
+                'viewRole'
+            ],
+            'update' => [
+                'updateRole'
+            ],
+            'index' => [
+                'indexRoles'
+            ],
+            'delete' => [
+                'deleteRole'
+            ],
+        ],
+        'permission' => [
+            'index' => [
+                'indexPermissions'
+            ]
+        ],
+    ],
 
     // Mark: handlers
     'handlers' => [

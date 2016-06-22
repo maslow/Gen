@@ -9,6 +9,7 @@
 namespace app\modules\rbac\controllers;
 
 
+use app\gen\ModuleManager;
 use yii\rest\Controller;
 use yii\rest\OptionsAction;
 
@@ -30,8 +31,9 @@ class PermissionController extends Controller
      * @return \yii\rbac\Permission[]
      */
     public function actionIndex(){
-        $permissions = $this->auth()->getPermissions();
-        return array_values($permissions);
+        //$permissions = $this->auth()->getPermissions();
+        $permissions = ModuleManager::getFormattedPermissionsFromRBAC();
+        return ($permissions);
     }
 
     /**
