@@ -8,7 +8,8 @@
     "angular": "^1.5.7",
     "bootstrap": "^3.3.6",
     "font-awesome": "^4.6.3",
-    "jquery": "^1.7.x"
+    "jquery": "^1.7.x",
+    "jquery-validation": "^1.15.0"
   },
   "devDependencies": {},
   "scripts": {

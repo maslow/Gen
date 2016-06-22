@@ -36,8 +36,8 @@ class Administrator extends \yii\db\ActiveRecord
         return [
             [['username', 'password', 'created_at', 'created_ip', 'created_by'], 'required'],
             [['uid', 'created_at', 'created_by'], 'integer'],
-            [['username'], 'string', 'max' => 32],
-            [['password'], 'string', 'max' => 64],
+            [['username'], 'string', 'min' => 3, 'max' => 32],
+            [['password'], 'string', 'min' => 6, 'max' => 64],
             [['created_ip'], 'string', 'max' => 16],
             [['username'], 'unique'],
         ];
@@ -69,9 +69,12 @@ class Administrator extends \yii\db\ActiveRecord
     /**
      * @return \yii\rbac\Role[]
      */
-    public function getRole(){
+    public function getRole()
+    {
         $roles = Yii::$app->authManager->getRolesByUser($this->uid);
-        return array_values($roles)[0];
+        if ($roles)
+            return array_values($roles)[0];
+        return null;
     }
 
     public function fields()
@@ -95,7 +98,9 @@ class Administrator extends \yii\db\ActiveRecord
             $this->created_by = Yii::$app->user->id;
         else
             $this->created_by = 0;
-        
+
+
+
         return parent::beforeValidate();
     }
 

@@ -52,6 +52,11 @@ class AdministratorController extends Controller
         $model = new Administrator();
         $model->load(\Yii::$app->request->getBodyParams(), '');
         if ($model->save()) {
+            if ($roleName = \Yii::$app->request->getBodyParam('role')) {
+                $auth = \Yii::$app->authManager;
+                if ($role = $auth->getRole($roleName))
+                    $auth->assign($role, $model->uid);
+            }
             $response = \Yii::$app->response;
             $response->setStatusCode(201);
             $response->headers->set('Location', Url::toRoute(['view', 'id' => $model->uid], true));
@@ -88,8 +93,20 @@ class AdministratorController extends Controller
         if (!$model = Administrator::findOne(['uid' => $id]))
             throw new NotFoundHttpException("Object not found: $id");
 
-        $model->load(\Yii::$app->request->getBodyParams(), '');
-        if (!$model->save() && !$model->hasErrors())
+        $params = \Yii::$app->request->getBodyParams();
+        if (\Yii::$app->request->getBodyParam('password') == null) {
+            unset($params['password']);
+        }
+        $model->load($params, '');
+        if ($model->save()) {
+            if ($roleName = \Yii::$app->request->getBodyParam('role')) {
+                $auth = \Yii::$app->authManager;
+                if ($role = $auth->getRole($roleName)) {
+                    $auth->revokeAll($model->uid);
+                    $auth->assign($role, $model->uid);
+                }
+            }
+        } elseif (!$model->hasErrors())
             throw new ServerErrorHttpException('Failed to update the object for unknown reason');
 
         return $model;
