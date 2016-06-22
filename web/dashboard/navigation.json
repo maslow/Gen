@@ -23,10 +23,6 @@
       {
         "label": "Roles",
         "url": "rbac/roles.html"
-      },
-      {
-        "label": "Create Role",
-        "url": "rbac/create.html"
       }
     ]
   }

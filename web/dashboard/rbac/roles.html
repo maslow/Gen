@@ -122,15 +122,16 @@
 
         // Load Data
         $scope.load = function () {
+            layer.load(1);
             API.call({url: '/roles', method: 'get'})
                     .success(function (data, status) {
                         $scope.roles = data;
                         $scope.$apply();
+                        layer.closeAll('loading');
                     });
             API.call({url: '/permissions', method: 'get'})
                     .success(function (data, status) {
                         $scope.allPermissions = data;
-                        Debug.log(data);
                         $scope.$apply();
                     });
         };
@@ -148,10 +149,11 @@
                 title: 'Create',
                 type: 1,
                 skin: 'layui-layer-rim',
-                area: '500px',
+                area: ['500px', '600px'],
                 shadeClose: true,
                 content: $("#form_dlg")
             });
+            layer.full(dlg);
             save_url = {
                 url: '/roles',
                 method: 'post'
@@ -176,10 +178,11 @@
                 title: 'Update',
                 type: 1,
                 skin: 'layui-layer-rim',
-                area: '500px',
+                area: ['500px', '600px'],
                 shadeClose: true,
                 content: $("#form_dlg")
             });
+            layer.full(dlg);
             save_url = {
                 url: '/roles/' + r.name,
                 method: 'put'
@@ -189,11 +192,15 @@
         // Remove Data
         $scope.remove = function (r) {
             layer.confirm('Are you sure to delete this?', function () {
-                Debug.log('/roles/' + r.name);
+                layer.closeAll();
+                layer.load(1);
                 API.call({url: '/roles/' + r.name, method: 'delete'})
                         .success(function () {
                             layer.msg('Successfully');
                             $scope.load();
+                        })
+                        .complete(function (res) {
+                            layer.closeAll('loading');
                         });
             });
         };
@@ -211,7 +218,7 @@
                 description: $scope.role.description,
                 permissions: p
             };
-
+            layer.load(1);
             API.call({url: save_url.url, method: save_url.method, data: $.param(data)})
                     .success(function (data, status) {
                         layer.close(dlg);
@@ -221,6 +228,9 @@
                     .error(function (res, text) {
                         var data = res.responseJSON;
                         layer.msg(data.message);
+                    })
+                    .complete(function (res) {
+                        layer.closeAll('loading');
                     });
         };
     });
