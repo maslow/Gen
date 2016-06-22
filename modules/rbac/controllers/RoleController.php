@@ -27,7 +27,7 @@ class RoleController extends Controller
     public function actionIndex()
     {
         $roles = $this->auth()->getRoles();
-        return $roles;
+        return array_values($roles);
     }
 
     /**
@@ -38,7 +38,10 @@ class RoleController extends Controller
     public function actionView($name)
     {
         if ($role = $this->auth()->getRole($name)) {
-            return $role;
+            return [
+                'role' => $role,
+                'permissions' => array_values($this->auth()->getPermissionsByRole($name))
+            ];
         } else {
             throw new NotFoundHttpException('Object : `$name` is not found');
         }
@@ -53,6 +56,7 @@ class RoleController extends Controller
     {
         $name = \Yii::$app->request->post('name');
         $label = \Yii::$app->request->post('description');
+        $permissions = \Yii::$app->request->post('permissions');
 
         if (empty($name) || empty($label))
             throw new HttpException(422, 'The filed name or description can not be empty');
@@ -65,6 +69,7 @@ class RoleController extends Controller
         $role->description = $label;
         try {
             $this->auth()->add($role);
+            $this->resolveAndApplyPermissions($role, $permissions);
             return $role;
         } catch (\Exception $e) {
             throw new ServerErrorHttpException($e->getMessage(), $e->getCode());
@@ -80,6 +85,7 @@ class RoleController extends Controller
     public function actionUpdate($name)
     {
         $description = \Yii::$app->request->post('description');
+        $permissions = \Yii::$app->request->post('permissions');
 
         if ($role = $this->auth()->getRole($name)) {
             if (!empty($description))
@@ -87,12 +93,25 @@ class RoleController extends Controller
 
             try {
                 $this->auth()->update($role->name, $role);
+                $this->resolveAndApplyPermissions($role, $permissions);
             } catch (\Exception $e) {
                 throw new ServerErrorHttpException($e->getMessage(), $e->getCode());
             }
             return $role;
         } else {
             throw new NotFoundHttpException("Object :`$name` is not found");
+        }
+    }
+
+    private function resolveAndApplyPermissions(Role $role, $permissions)
+    {
+        $arr = explode(',', $permissions);
+        $this->auth()->removeChildren($role);
+        foreach ($arr as $v) {
+            if ($p = $this->auth()->getPermission($v)) {
+                if (!$this->auth()->hasChild($role, $p))
+                    $this->auth()->addChild($role, $p);
+            }
         }
     }
 

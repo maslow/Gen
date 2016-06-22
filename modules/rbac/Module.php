@@ -38,6 +38,10 @@ class Module extends \yii\base\Module implements BootstrapInterface
                     '' => 'options',
                 ]
             ],
+            [
+                'class' => UrlRule::className(),
+                'controller' => ['permissions' => 'rbac/permission']
+            ],
         ]);
     }
 }

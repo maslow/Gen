@@ -68,6 +68,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-sm-2 control-label">Permissions</label>
+
+            <div class="col-sm-6">
+                <div ng-repeat="p in allPermissions">
+                    <input type="checkbox" ng-model="role.permissions[p.name]"/>{{p.description}}
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="button" ng-click="save()" class="btn btn-default">Submit</button>
             </div>
@@ -80,10 +89,19 @@
 
     var app = angular.module('roles', []);
     app.controller('RolesCtrl', function ($scope, $http) {
-        var save_url = {url: '', method: ''};
+        var save_url = {
+            url: '',
+            method: ''
+        };
+
         var dlg;
 
-        $scope.role = {name: '', description: ''};
+        $scope.role = {
+            name: '',
+            description: '',
+            permissions: []
+        };
+
         $scope.isCreate = true;
 
         // Load Data
@@ -93,12 +111,21 @@
                         $scope.roles = data;
                         $scope.$apply();
                     });
+            API.call({url: '/permissions', method: 'get'})
+                    .success(function (data, status) {
+                        $scope.allPermissions = data;
+                        $scope.$apply();
+                    });
         };
         $scope.load();
 
         // Create Data
         $scope.create = function () {
-            $scope.role = {name: '', description: ''};
+            $scope.role = {
+                name: '',
+                description: '',
+                permissions: []
+            };
             $scope.isCreate = true;
             dlg = layer.open({
                 title: 'Create',
@@ -118,7 +145,16 @@
         $scope.update = function (r) {
             $scope.role.name = r.name;
             $scope.role.description = r.description;
-
+            $scope.role.permissions = [];
+            API.call({url: '/roles/' + r.name, method: 'get'})
+                    .success(function (data, status) {
+                        console.log(data);
+                        for (var i = 0; i < data.permissions.length; i++) {
+                            var name = data.permissions[i].name;
+                            $scope.role.permissions[name] = true;
+                            $scope.$apply();
+                        }
+                    });
             $scope.isCreate = false;
             dlg = layer.open({
                 title: 'Update',
@@ -148,7 +184,19 @@
 
         // Save to server
         $scope.save = function () {
-            API.call({url: save_url.url, method: save_url.method, data: $.param($scope.role)})
+            var p = '';
+            for (var x in $scope.role.permissions) {
+                if($scope.role.permissions[x] == true)
+                    p = p + x + ',';
+            }
+            console.log(p);
+            var data = {
+                name: $scope.role.name,
+                description: $scope.role.description,
+                permissions: p
+            };
+
+            API.call({url: save_url.url, method: save_url.method, data: $.param(data)})
                     .success(function (data, status) {
                         layer.close(dlg);
                         layer.msg('Successfully');
