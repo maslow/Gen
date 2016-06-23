@@ -1,0 +1,24 @@
+html, body {
+    height: 100%;
+}
+
+.wrap {
+    height: 100%;
+}
+
+.swiper-container {
+    width: 100%;
+    height: 100%;
+}
+
+.swiper-slide .container {
+    padding-top: 200px;
+    height: 100%;
+}
+.swiper-slide .container .jumbotron{
+    text-align: center;
+}
+.footer {
+    position: absolute;
+    bottom:0;
+}

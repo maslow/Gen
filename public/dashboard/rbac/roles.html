@@ -200,11 +200,13 @@
                             $scope.load();
                         })
                         .error(function (res) {
+                            var message = 'Error';
                             if (res.status == 403) {
-                                layer.msg('Forbidden');
-                            }else{
-                                layer.msg('Error');
+                                message = 'Forbidden';
+                            } else if (res.responseJSON instanceof Object) {
+                                message = res.responseJSON.message;
                             }
+                            layer.msg(message, {shift: 6});
                         })
                         .complete(function (res) {
                             layer.closeAll('loading');

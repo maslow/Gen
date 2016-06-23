@@ -123,11 +123,17 @@ class RoleController extends Controller
     public function actionDelete($name)
     {
         if ($role = $this->auth()->getRole($name)) {
-            try {
-                $this->auth()->remove($role);
-            } catch (\Exception $e) {
-                throw new ServerErrorHttpException($e->getMessage(), $e->getCode());
+
+            if (!count($this->auth()->getUserIdsByRole($name))) {
+                try {
+                    $this->auth()->remove($role);
+                } catch (\Exception $e) {
+                    throw new ServerErrorHttpException($e->getMessage(), $e->getCode());
+                }
+            } else {
+                throw new NotAcceptableHttpException('The role cannot be deleted unless there are no assignments with it');
             }
+
             \Yii::$app->response->setStatusCode(204);
         } else {
             throw new NotAcceptableHttpException("Object `$name` is not found");
