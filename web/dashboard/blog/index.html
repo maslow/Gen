@@ -90,7 +90,7 @@
         ]],
         loader: function (param, success, error) {
             var options = $(this).datagrid('options');
-            var xhr = API.call({url: options.url + '?page=' + param.page, method: 'get'})
+            API.call({url: options.url + '?page=' + param.page, method: 'get'})
                     .success(function (data, textStatus, xhr) {
                         var total = xhr.getResponseHeader('X-Pagination-Total-Count');
                         success({
@@ -98,7 +98,16 @@
                             rows: data
                         });
                     })
-                    .error(error);
+                    .error(function (res, text, xhr) {
+                        var message = 'Error';
+                        if (res.status == 403) {
+                            message = res.responseJSON.name;
+                        } else if (res.status == 422) {
+                            message = res.responseJSON[0].message;
+                        }
+                        layer.msg(message, {shift: 6});
+                        error(res);
+                    });
         }
     });
 
@@ -145,9 +154,14 @@
                             layer.msg('Successfully');
                             dg.datagrid('reload');
                         })
-                        .error(function (res) {
-                            layer.close(layer_dlg);
-                            layer.msg(res.statusText, {icon: 5, shift: 6});
+                        .error(function (res, text, xhr) {
+                            var message = 'Error';
+                            if (res.status == 403) {
+                                message = res.responseJSON.name;
+                            } else if (res.status == 422) {
+                                message = res.responseJSON[0].message;
+                            }
+                            layer.msg(message, {shift: 6});
                         });
             });
         }
@@ -162,10 +176,14 @@
                     layer.close(layer_dlg);
                     dg.datagrid('reload');
                 })
-                .error(function (res, text, e) {
-                    var data = res.responseJSON;
-                    layer.close(layer_dlg);
-                    layer.msg(data.message,{icon: 5, shift: 6});
+                .error(function (res, text, xhr) {
+                    var message = 'Error';
+                    if (res.status == 403) {
+                        message = res.responseJSON.name;
+                    } else if (res.status == 422) {
+                        message = res.responseJSON[0].message;
+                    }
+                    layer.msg(message, {shift: 6});
                 });
         return false;
     });

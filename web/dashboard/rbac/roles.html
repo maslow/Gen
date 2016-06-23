@@ -199,6 +199,13 @@
                             layer.msg('Successfully');
                             $scope.load();
                         })
+                        .error(function (res) {
+                            if (res.status == 403) {
+                                layer.msg('Forbidden');
+                            }else{
+                                layer.msg('Error');
+                            }
+                        })
                         .complete(function (res) {
                             layer.closeAll('loading');
                         });
@@ -227,7 +234,13 @@
                     })
                     .error(function (res, text) {
                         var data = res.responseJSON;
-                        layer.msg(data.message);
+                        var message = 'Error';
+                        if (res.status == 403) {
+                            message = data.name;
+                        } else if (res.status == 422) {
+                            message = data[0].message;
+                        }
+                        layer.msg(message);
                     })
                     .complete(function (res) {
                         layer.closeAll('loading');

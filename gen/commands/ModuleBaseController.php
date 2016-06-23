@@ -149,8 +149,9 @@ class ModuleBaseController extends Controller
                 if (isset($p['ruleClass'])) {
                     /** @var \yii\rbac\Rule $rule */
                     $rule = new $p['ruleClass'];
-                    if (!$auth->getRule($rule->name))
+                    if (!$auth->getRule($rule->name)) {
                         $auth->add($rule);
+                    }
 
                     $permission->ruleName = $rule->name;
                 }

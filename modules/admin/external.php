@@ -20,16 +20,19 @@ return [
     'ACL' => [
         'administrator' => [
             'view' => [
-                'viewAdministrator'
+                'viewAdministrator',
+                'viewSelf' => '\app\modules\admin\SelfRule'
             ],
             'update' => [
-                'updateAdministrator'
+                'updateAdministrator',
+                'updateSelf' => '\app\modules\admin\SelfRule'
+
             ],
             'index' => [
                 'indexAdministrators'
             ],
             'delete' => [
-                'deleteAdministrator'
+                'deleteAdministrator' => '\app\modules\admin\NotDeleteSelfRule'
             ],
         ],
     ],

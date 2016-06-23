@@ -58,7 +58,7 @@
 
             <div class="col-sm-8">
                 <input name="username" ng-model="form.username" type="text" class="form-control"
-                       minlength="3"   ng-readonly="!isCreate"/>
+                       minlength="3" ng-readonly="!isCreate"/>
             </div>
         </div>
         <div class="form-group">
@@ -74,7 +74,7 @@
 
             <div class="col-sm-8">
                 <input name="password2" ng-model="form.password2" type="password" class="form-control"
-                       minlength="6" equalTo="#password" ng-required="isCreate" />
+                       minlength="6" equalTo="#password" ng-required="isCreate"/>
             </div>
         </div>
         <div class="form-group">
@@ -101,6 +101,20 @@
 <script>
     Identity.loginRequired();
 
+    function error(res, text, xhr) {
+        var message = 'Error';
+        if (res.status == 403) {
+            message = res.responseJSON.name;
+        } else if (res.status == 422) {
+            message = res.responseJSON[0].message;
+        }
+        layer.msg(message);
+    }
+
+    function closeLoadingLayer() {
+        layer.closeAll('loading');
+    }
+
     var app = angular.module('admin', []);
     var save_url = {
         url: '',
@@ -117,8 +131,9 @@
                     .success(function (data, status) {
                         $scope.objects = data;
                         $scope.$apply();
-                        layer.closeAll('loading');
-                    });
+                    })
+                    .error(error)
+                    .complete(closeLoadingLayer);
             API.call({url: '/roles', method: 'get'})
                     .success(function (data, status) {
                         $scope.roles = data;
@@ -176,15 +191,14 @@
                             layer.msg('Successfully');
                             $scope.load();
                         })
-                        .complete(function (res) {
-                            layer.closeAll('loading');
-                        });
+                        .error(error)
+                        .complete(closeLoadingLayer);
             });
         };
 
-        $scope.validate = function(){
-            if($scope.form.password != $scope.form.password2){
-                layer.msg('The confirm password must equal to password',{shift:6});
+        $scope.validate = function () {
+            if ($scope.form.password != $scope.form.password2) {
+                layer.msg('The confirm password must equal to password', {shift: 6});
                 $scope.form.password = '';
                 $scope.form.password2 = '';
             }
@@ -199,13 +213,8 @@
                     layer.msg('Successfully');
                     angular.element($('[ng-controller]')).scope().load();
                 })
-                .error(function (res, text) {
-                    var data = res.responseJSON;
-                    layer.msg(data[0].message);
-                })
-                .complete(function (res) {
-                    layer.closeAll('loading');
-                });
+                .error(error)
+                .complete(closeLoadingLayer);
         return false;
     });
 </script>
