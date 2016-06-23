@@ -90,10 +90,24 @@ Update all the modules, just behave like running module/update for every module.
 php yii module/update-all
 ```
 
-OTHERWISE
+OTHERS
 ---------
+Before access the client's url , you should install the packages of npm or bower:
+```command
+cd  public/web
+npm install
+```
 
-Dashboard URL:  http://localhost/gen/web/dashboard
+```command
+cd public/dashboard
+npm install bower -g
+npm install 
+bower install 
+```
+
+Web URL:  http://localhost/gen/public/web
+Dashboard URL:  http://localhost/gen/public/dashboard
+API URL:  http://localhost/gen/public/api
 
   
  

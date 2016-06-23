@@ -26,10 +26,11 @@ phpunit.phar
 # local phpunit config
 /phpunit.xml
 
-web/api/index.php
+public/api/index.php
 
 config/db.php
 
 config/modules.php
 
+node_modules
 .git

@@ -42,7 +42,7 @@ class InitBaseController extends Controller
         $tplDBPath = \Yii::getAlias("@app/gen/environments/db-{$env}.php");
 
         $targetDBPath = \Yii::getAlias('@app/config/db.php');
-        $targetIndexPath = \Yii::getAlias('@app/web/api/index.php');
+        $targetIndexPath = \Yii::getAlias('@app/public/api/index.php');
 
         file_exists($targetIndexPath) ? unlink($targetIndexPath) : null;
 
