@@ -91,15 +91,14 @@ class Administrator extends \yii\db\ActiveRecord
 
     public function beforeValidate()
     {
-        $this->created_at = time();
-        $this->created_ip = isset(Yii::$app->request->userIP) ? Yii::$app->request->userIP : '0.0.0.0';
-
-        if (isset(Yii::$app->user) && !Yii::$app->user->isGuest)
-            $this->created_by = Yii::$app->user->id;
-        else
-            $this->created_by = 0;
-
-
+        if ($this->isNewRecord) {
+            $this->created_at = time();
+            $this->created_ip = isset(Yii::$app->request->userIP) ? Yii::$app->request->userIP : '0.0.0.0';
+            if (isset(Yii::$app->user) && !Yii::$app->user->isGuest)
+                $this->created_by = Yii::$app->user->id;
+            else
+                $this->created_by = 0;
+        }
 
         return parent::beforeValidate();
     }

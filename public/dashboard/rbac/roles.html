@@ -240,7 +240,7 @@
                         if (res.status == 403) {
                             message = data.name;
                         } else if (res.status == 422) {
-                            message = data[0].message;
+                            message = data.message;
                         }
                         layer.msg(message);
                     })
