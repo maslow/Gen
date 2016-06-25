@@ -9,7 +9,4 @@ out
 gen
 
 node_modules
-vendor/bower
-
-vendor/jquery-easyui/demo*
-vendor/jquery-easyui/src
+vendor
