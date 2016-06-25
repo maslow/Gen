@@ -12,9 +12,9 @@ namespace app\modules\admin;
 use yii\rbac\Item;
 use yii\rbac\Rule;
 
-class NotDeleteSelfRule extends Rule
+class NotDeleteOneselfRule extends Rule
 {
-    public $name = 'admin.notDeleteSelf';
+    public $name = 'admin.administrator.notDeleteOneself';
 
     /**
      * Executes the rule.

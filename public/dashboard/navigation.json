@@ -1,14 +1,5 @@
 [
   {
-    "module": "Blog",
-    "links": [
-      {
-        "label": "Posts",
-        "url": "blog/index.html"
-      }
-    ]
-  },
-  {
     "module": "Admin",
     "links": [
       {

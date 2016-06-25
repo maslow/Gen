@@ -12,9 +12,9 @@ namespace app\modules\admin;
 use yii\rbac\Item;
 use yii\rbac\Rule;
 
-class SelfRule extends Rule
+class UpdateOwnPasswordRule extends Rule
 {
-    public $name = 'admin.isSelf';
+    public $name = 'admin.administrator.updateOwnPassword';
 
     /**
      * Executes the rule.
@@ -27,6 +27,10 @@ class SelfRule extends Rule
      */
     public function execute($user, $item, $params)
     {
-        return $user == \Yii::$app->request->get('id');
+        $req = \Yii::$app->request;
+        return
+            $user == $req->get('id')
+            && count($req->getBodyParams()) == 1
+            && !empty($req->getBodyParam('password'));
     }
 }

@@ -104,30 +104,20 @@
     Identity.loginRequired();
 
     var app = angular.module('roles', []);
-    app.controller('RolesCtrl', function ($scope, $http) {
+    app.controller('RolesCtrl', function ($scope) {
         var save_url = {
             url: '',
             method: ''
         };
-
-        var dlg;
-
-        $scope.role = {
-            name: '',
-            description: '',
-            permissions: []
-        };
-
+        $scope.role = {};
         $scope.isCreate = true;
 
         // Load Data
         $scope.load = function () {
-            layer.load(1);
             API.call({url: '/roles', method: 'get'})
                     .success(function (data, status) {
                         $scope.roles = data;
                         $scope.$apply();
-                        layer.closeAll('loading');
                     });
             API.call({url: '/permissions', method: 'get'})
                     .success(function (data, status) {
@@ -135,6 +125,7 @@
                         $scope.$apply();
                     });
         };
+
         $scope.load();
 
         // Create Data
@@ -145,15 +136,13 @@
                 permissions: []
             };
             $scope.isCreate = true;
-            dlg = layer.open({
-                title: 'Create',
-                type: 1,
-                skin: 'layui-layer-rim',
-                area: ['500px', '600px'],
-                shadeClose: true,
+
+            var index = layer.open({
+                title: 'Create', type: 1, skin: 'layui-layer-rim', area: ['500px', '600px'], shadeClose: true,
                 content: $("#form_dlg")
             });
-            layer.full(dlg);
+            layer.full(index);
+
             save_url = {
                 url: '/roles',
                 method: 'post'
@@ -165,24 +154,23 @@
             $scope.role.name = r.name;
             $scope.role.description = r.description;
             $scope.role.permissions = [];
+
             API.call({url: '/roles/' + r.name, method: 'get'})
                     .success(function (data, status) {
                         for (var i = 0; i < data.permissions.length; i++) {
                             var name = data.permissions[i].name;
                             $scope.role.permissions[name] = true;
-                            $scope.$apply();
                         }
+                        $scope.$apply();
                     });
             $scope.isCreate = false;
-            dlg = layer.open({
-                title: 'Update',
-                type: 1,
-                skin: 'layui-layer-rim',
-                area: ['500px', '600px'],
-                shadeClose: true,
+
+            var index = layer.open({
+                title: 'Update', type: 1, skin: 'layui-layer-rim', area: ['500px', '600px'], shadeClose: true,
                 content: $("#form_dlg")
             });
-            layer.full(dlg);
+            layer.full(index);
+
             save_url = {
                 url: '/roles/' + r.name,
                 method: 'put'
@@ -193,24 +181,12 @@
         $scope.remove = function (r) {
             layer.confirm('Are you sure to delete this?', function () {
                 layer.closeAll();
-                layer.load(1);
                 API.call({url: '/roles/' + r.name, method: 'delete'})
                         .success(function () {
                             layer.msg('Successfully');
                             $scope.load();
                         })
-                        .error(function (res) {
-                            var message = 'Error';
-                            if (res.status == 403) {
-                                message = 'Forbidden';
-                            } else if (res.responseJSON instanceof Object) {
-                                message = res.responseJSON.message;
-                            }
-                            layer.msg(message, {shift: 6});
-                        })
-                        .complete(function (res) {
-                            layer.closeAll('loading');
-                        });
+                        .error(API.error);
             });
         };
 
@@ -221,32 +197,19 @@
                 if ($scope.role.permissions[x] == true)
                     p = p + x + ',';
             }
-            console.log(p);
             var data = {
                 name: $scope.role.name,
                 description: $scope.role.description,
                 permissions: p
             };
-            layer.load(1);
+
             API.call({url: save_url.url, method: save_url.method, data: $.param(data)})
                     .success(function (data, status) {
-                        layer.close(dlg);
+                        layer.closeAll();
                         layer.msg('Successfully');
                         $scope.load();
                     })
-                    .error(function (res, text) {
-                        var data = res.responseJSON;
-                        var message = 'Error';
-                        if (res.status == 403) {
-                            message = data.name;
-                        } else if (res.status == 422) {
-                            message = data.message;
-                        }
-                        layer.msg(message);
-                    })
-                    .complete(function (res) {
-                        layer.closeAll('loading');
-                    });
+                    .error(API.error);
         };
     });
 </script>

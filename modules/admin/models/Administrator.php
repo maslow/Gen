@@ -4,6 +4,8 @@ namespace app\modules\admin\models;
 
 use app\modules\auth\models\U;
 use Yii;
+use yii\base\ErrorException;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%administrator}}".
@@ -77,6 +79,14 @@ class Administrator extends \yii\db\ActiveRecord
         return null;
     }
 
+    /**
+     * @return $this
+     */
+    public function getAuthor()
+    {
+        return self::find()->where(['uid' => $this->created_by]);
+    }
+
     public function fields()
     {
         return [
@@ -85,7 +95,8 @@ class Administrator extends \yii\db\ActiveRecord
             'created_at',
             'created_ip',
             'created_by',
-            'role'
+            'role',
+            'author'
         ];
     }
 
@@ -113,13 +124,21 @@ class Administrator extends \yii\db\ActiveRecord
                 return false;
             }
             $this->uid = $u->id;
-            if ($this->created_by === 0)
-                $this->created_by = $u->id;
 
             $this->password = Yii::$app->security->generatePasswordHash($this->password);
         } elseif (array_key_exists('password', $this->getDirtyAttributes())) {
             $this->password = Yii::$app->security->generatePasswordHash($this->password);
         }
         return parent::beforeSave($insert);
+    }
+
+    public function afterDelete()
+    {
+        if ($u = U::findOne($this->uid)) {
+            $u->delete();
+        } else {
+            throw new Exception('Delete u by uid failed for no reason');
+        }
+        parent::afterDelete();
     }
 }

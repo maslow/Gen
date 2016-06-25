@@ -103,17 +103,19 @@ class ModuleInfo
             foreach ($acts as $act => $permissions) {
                 $apiName = "{$this->id}.{$ctrl}.{$act}";
                 if (is_string($permissions))
-                    $this->ACL[$apiName] = $permissions;
+                    $permissions = [$permissions];
 
                 if (is_array($permissions))
                     foreach ($permissions as $k => $v) {
-                        if (is_integer($k)) {
-                            $this->ACL[$apiName][] = "$apiName#$v";
-                            $this->permissions[] = ['name' => "$apiName#$v", 'description' => $v];
-                        } elseif (is_string($k)) {
-                            $this->ACL[$apiName][] = "$apiName#$k";
-                            $this->permissions[] = ['name' => "$apiName#$k", 'description' => $k, 'ruleClass' => $v];
-                        }
+                        $this->ACL[$apiName][] = "$apiName#$k";
+                        $p = ['name' => "$apiName#$k"];
+                        if (is_string($v))
+                            $p['description'] = $v;
+                        if (is_array($v) && isset($v['label']))
+                            $p['description'] = $v['label'];
+                        if (is_array($v) && isset($v['rule']))
+                            $p['ruleClass'] = $v['rule'];
+                        $this->permissions[] = $p;
                     }
             }
         }
@@ -147,17 +149,17 @@ class ModuleInfo
                     throw new InvalidConfigException("The config of navigation is invalid @{$this->id} : {$key}-{$k}");
                 }
                 // convert the permission name
-                if (!isset($subNav['bind-permission']))
-                    $subNav['bind-permission'] = [];
+                if (!isset($subNav['bind - permission']))
+                    $subNav['bind - permission'] = [];
 
-                if (is_string($subNav['bind-permission']))
-                    $subNav['bind-permission'] = array($subNav['bind-permission']);
+                if (is_string($subNav['bind - permission']))
+                    $subNav['bind - permission'] = array($subNav['bind - permission']);
 
                 $bindPermission = [];
-                foreach ($subNav['bind-permission'] as $p) {
+                foreach ($subNav['bind - permission'] as $p) {
                     array_push($bindPermission, "{$this->id}.{$p}");
                 }
-                $subNavs[$k]['bind-permission'] = $bindPermission;
+                $subNavs[$k]['bind - permission'] = $bindPermission;
 
             }
             $this->navigation[$key] = $subNavs;

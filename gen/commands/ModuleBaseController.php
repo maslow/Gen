@@ -199,7 +199,7 @@ class ModuleBaseController extends Controller
         }
 
         foreach ($currentPermissions as $p) {
-            if (!$auth->getPermission($p['name'])) {
+            if (!$permission = $auth->getPermission($p['name'])) {
                 $permission = $auth->createPermission($p['name']);
                 $permission->description = $p['description'];
                 if (isset($p['ruleClass'])) {
@@ -211,6 +211,18 @@ class ModuleBaseController extends Controller
                     $permission->ruleName = $rule->name;
                 }
                 $auth->add($permission);
+            } else {
+                if (isset($p['ruleClass'])) {
+                    /** @var \yii\rbac\Rule $rule */
+                    $rule = new $p['ruleClass'];
+                    if (!$auth->getRule($rule->name))
+                        $auth->add($rule);
+
+                    $permission->ruleName = $rule->name;
+                }else{
+                    $permission->ruleName = null;
+                }
+                $auth->update($permission->name, $permission);
             }
         }
         return $oldPermissions;

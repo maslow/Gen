@@ -11,7 +11,7 @@
   "dependencies": {
     "animate.css": "^3.5.1",
     "bootstrap": "^3.3.6",
-    "jquery": "^3.0.0",
+    "jquery": "^1.x.x",
     "swiper": "^3.3.1"
   }
 }

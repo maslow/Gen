@@ -126,6 +126,9 @@ class AdministratorController extends Controller
 
         if ($model->delete() === false)
             throw new ServerErrorHttpException('Failed to delete the object for unknown reason');
+        else {
+            \Yii::$app->authManager->revokeAll($id);
+        }
         \Yii::$app->response->setStatusCode(204);
     }
 }

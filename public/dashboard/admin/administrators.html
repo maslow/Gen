@@ -33,6 +33,7 @@
                 <th>Username</th>
                 <th>Role</th>
                 <th>Created At</th>
+                <th>Created By</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -41,6 +42,7 @@
                 <td><span ng-bind="o.username"></span></td>
                 <td><span ng-bind="o.role.description"></span></td>
                 <td><span ng-bind="o.created_at"></span></td>
+                <td><span ng-bind="o.author.username"></span></td>
                 <td>
                     <span class="btn fa fa-edit" ng-click="update(o)"></span>
                     <span class="btn fa fa-trash" ng-click="remove(o)"></span>
@@ -101,39 +103,22 @@
 <script>
     Identity.loginRequired();
 
-    function error(res, text, xhr) {
-        var message = 'Error';
-        if (res.status == 403) {
-            message = res.responseJSON.name;
-        } else if (res.status == 422) {
-            message = res.responseJSON[0].message;
-        }
-        layer.msg(message);
-    }
-
-    function closeLoadingLayer() {
-        layer.closeAll('loading');
-    }
-
     var app = angular.module('admin', []);
-    var save_url = {
-        url: '',
-        method: ''
-    };
-
-    var dlg;
 
     app.controller('AdminCtrl', function ($scope, $http) {
+        var save_url = {
+            url: '',
+            method: ''
+        };
+
         // Load Data
         $scope.load = function () {
-            layer.load(1);
             API.call({url: '/administrators', method: 'get'})
                     .success(function (data, status) {
                         $scope.objects = data;
                         $scope.$apply();
                     })
-                    .error(error)
-                    .complete(closeLoadingLayer);
+                    .error(API.error);
             API.call({url: '/roles', method: 'get'})
                     .success(function (data, status) {
                         $scope.roles = data;
@@ -145,14 +130,12 @@
         // Create Data
         $scope.create = function () {
             $scope.form = {};
-
+            $scope.form.password = '';
+            $scope.form.password2 = '';
             $scope.isCreate = true;
-            dlg = layer.open({
-                title: 'Create',
-                type: 1,
-                skin: 'layui-layer-rim',
-                area: ['500px', '600px'],
-                shadeClose: true,
+
+            layer.open({
+                title: 'Create', type: 1, skin: 'layui-layer-rim', area: ['500px', '500px'], shadeClose: true,
                 content: $("#form_dlg")
             });
             save_url = {
@@ -164,14 +147,10 @@
         // Update Data
         $scope.update = function (o) {
             $scope.form = o;
-
             $scope.isCreate = false;
-            dlg = layer.open({
-                title: 'Update',
-                type: 1,
-                skin: 'layui-layer-rim',
-                area: ['500px', '600px'],
-                shadeClose: true,
+
+            layer.open({
+                title: 'Update', type: 1, skin: 'layui-layer-rim', area: ['500px', '500px'], shadeClose: true,
                 content: $("#form_dlg")
             });
 
@@ -185,17 +164,16 @@
         $scope.remove = function (o) {
             layer.confirm('Are you sure to delete this?', function () {
                 layer.closeAll();
-                layer.load(1);
                 API.call({url: '/administrators/' + o.uid, method: 'delete'})
                         .success(function () {
                             layer.msg('Successfully');
                             $scope.load();
                         })
-                        .error(error)
-                        .complete(closeLoadingLayer);
+                        .error(API.error);
             });
         };
 
+        // Save to server
         $scope.save = function () {
             if ($scope.form.password != $scope.form.password2) {
                 layer.msg('The confirm password must equal to password', {shift: 6});
@@ -203,15 +181,13 @@
                 $scope.form.password2 = '';
                 return false;
             }
-            layer.load(1);
             API.call({url: save_url.url, method: save_url.method, data: $("#form_dlg form").serialize()})
                     .success(function (data, status) {
-                        layer.close(dlg);
+                        layer.closeAll();
                         layer.msg('Successfully');
                         $scope.load();
                     })
-                    .error(error)
-                    .complete(closeLoadingLayer);
+                    .error(API.error);
             return false;
         };
     });

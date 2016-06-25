@@ -36,6 +36,15 @@ var Identity = {
 
 var API = {
     call: function (options) {
+        layer.load(1);
+        var complete = options.complete;
+        options.complete = function (xhr) {
+            if (complete != undefined || complete != null) {
+                complete(xhr);
+            }
+            layer.closeAll('loading');
+        };
+
         options.url = this.url(options.url);
 
         var token = Identity.getAccessToken();
@@ -46,6 +55,27 @@ var API = {
         }
         return $.ajax(options);
     },
+    error: function (xhr) {
+        var message = 'Error';
+        //noinspection JSUnresolvedVariable
+        var res = xhr.responseJSON;
+        if (xhr.status == 403) {
+            message = res.name;
+        } else if (xhr.status == 401) {
+            Identity.clear();
+            Identity.loginRequired();
+        } else if (xhr.status == 422) {
+            if (res instanceof Array) {
+                message = res[0].message;
+            } else {
+                message = res.message;
+            }
+        } else if (xhr.status == 406) {
+            message = res.message;
+        }
+        layer.msg(message, {shift: 6});
+    },
+
     url: function (url) {
         return Config.api_url + url;
     }
@@ -65,3 +95,7 @@ var Debug = {
         console.log(message);
     }
 };
+
+layer.config({
+    offset: '50px'
+});

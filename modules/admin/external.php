@@ -20,19 +20,27 @@ return [
     'ACL' => [
         'administrator' => [
             'view' => [
-                'viewAdministrator',
-                'viewSelf' => '\app\modules\admin\SelfRule'
+                'View Administrator'
             ],
             'update' => [
-                'updateAdministrator',
-                'updateSelf' => '\app\modules\admin\SelfRule'
+                'Update Administrator',
+                [
+                    'label' => 'Update Own Password',
+                    'rule' => '\app\modules\admin\UpdateOwnPasswordRule'
+                ]
 
             ],
             'index' => [
-                'indexAdministrators'
+                'Browse All Administrators'
+            ],
+            'create' => [
+                'Create Administrator'
             ],
             'delete' => [
-                'deleteAdministrator' => '\app\modules\admin\NotDeleteSelfRule'
+                [
+                    'label' => 'Delete Administrator',
+                    'rule' => '\app\modules\admin\NotDeleteOneselfRule'
+                ]
             ],
         ],
     ],

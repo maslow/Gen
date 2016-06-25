@@ -44,8 +44,12 @@
 </div><!-- default-login -->
 
 <script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="vendor/bower/layer/layer.js"></script>
 <script src="lib.js"></script>
 <script>
+    layer.config({
+        offset: '150px'
+    });
     function checkIdentity() {
         if (Identity.get())
             location.href = 'index.html';
@@ -56,16 +60,12 @@
         $('#login-form').submit(function () {
             $('.help-block').html();
             var data = $(this).serialize();
-            console.log(data);
             API.call({url: '/admin/tokens', data: data, method: 'post'})
                     .success(function (data, status) {
                         Identity.set(data);
                         checkIdentity();
                     })
-                    .error(function (res, text, e) {
-                        var data = res.responseJSON;
-                        $('.help-block').html(data.message);
-                    });
+                    .error(API.error);
             return false;
         });
 

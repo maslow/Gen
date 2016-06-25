@@ -17,21 +17,21 @@ return [
     'ACL' => [
         'role' => [
             'view' => [
-                'viewRole'
+                'View Role'
             ],
             'update' => [
-                'updateRole'
+                'Update Role'
             ],
             'index' => [
-                'indexRoles'
+                'Browse All Roles'
             ],
             'delete' => [
-                'deleteRole'
+                'Delete Role'
             ],
         ],
         'permission' => [
             'index' => [
-                'indexPermissions'
+                'Browse All Permissions'
             ]
         ],
     ],
