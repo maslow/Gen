@@ -8,11 +8,17 @@
     <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css"/>
     <!-- Twitter Bootstrap 3 CSS File -->
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <!-- Sweetalert CSS File -->
+    <link rel="stylesheet" href="../node_modules/sweetalert/dist/sweetalert.css"/>
 
     <!-- jQuery JS File -->
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <!-- Ng JS File -->
     <script src="../node_modules/angular/angular.min.js"></script>
-    <script src="../vendor/bower/layer/layer.js"></script>
+    <!-- Sweetalert JS File -->
+    <script src="../node_modules/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Twitter Bootstrap JS File -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <script src="../lib.js"></script>
 </head>
@@ -50,29 +56,38 @@
     </div>
 </div>
 
-<div id="form_dlg" style="padding: 30px;display:none">
-    <form class="form-horizontal">
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Name</label>
-
-            <div class="col-sm-9">
-                <input ng-model="role.name" name="name" type="text" class="form-control" ng-show="isCreate">
-                <label ng-bind="role.name" name="name" type="text" class="form-control" ng-hide="isCreate"></label>
+<div id="form_dlg" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Role</h4>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Label</label>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Name</label>
 
-            <div class="col-sm-9">
-                <input ng-model="role.description" name="description" type="text" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Permissions</label>
+                        <div class="col-sm-9">
+                            <input ng-model="role.name" name="name" type="text" class="form-control" ng-show="isCreate">
+                            <label ng-bind="role.name" name="name" type="text" class="form-control"
+                                   ng-hide="isCreate"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Label</label>
 
-            <div class="col-sm-9">
-                <div ng-repeat="(k, v) in allPermissions">
-                    <div class="row" ng-repeat="(kk,vv) in v">
+                        <div class="col-sm-9">
+                            <input ng-model="role.description" name="description" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Permissions</label>
+
+                        <div class="col-sm-9">
+                            <div ng-repeat="(k, v) in allPermissions">
+                                <div class="row" ng-repeat="(kk,vv) in v">
                         <span class="col-sm-12">
                             <div class="panel panel-default">
                                 <div class="panel-heading">{{k}} | {{kk}}</div>
@@ -88,16 +103,19 @@
                                 </ul>
                             </div>
                         </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-                <button type="button" ng-click="save()" class="btn btn-default">Submit</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
             </div>
+
         </div>
-    </form>
+    </div>
 </div>
 
 <script>
@@ -105,6 +123,7 @@
 
     var app = angular.module('roles', []);
     app.controller('RolesCtrl', function ($scope) {
+        var dialogForm = $("#form_dlg");
         var save_url = {
             url: '',
             method: ''
@@ -137,11 +156,7 @@
             };
             $scope.isCreate = true;
 
-            var index = layer.open({
-                title: 'Create', type: 1, skin: 'layui-layer-rim', area: ['500px', '600px'], shadeClose: true,
-                content: $("#form_dlg")
-            });
-            layer.full(index);
+            dialogForm.modal();
 
             save_url = {
                 url: '/roles',
@@ -165,11 +180,7 @@
                     });
             $scope.isCreate = false;
 
-            var index = layer.open({
-                title: 'Update', type: 1, skin: 'layui-layer-rim', area: ['500px', '600px'], shadeClose: true,
-                content: $("#form_dlg")
-            });
-            layer.full(index);
+            dialogForm.modal();
 
             save_url = {
                 url: '/roles/' + r.name,
@@ -179,15 +190,26 @@
 
         // Remove Data
         $scope.remove = function (r) {
-            layer.confirm('Are you sure to delete this?', function () {
-                layer.closeAll();
-                API.call({url: '/roles/' + r.name, method: 'delete'})
-                        .success(function () {
-                            layer.msg('Successfully');
-                            $scope.load();
-                        })
-                        .error(API.error);
-            });
+            swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover it!",
+                        type: "warning", showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        closeOnConfirm: false,
+                        showLoaderOnConfirm: true
+                    },
+                    function () {
+                        API.call({url: '/roles/' + r.name, method: 'delete'})
+                                .success(function () {
+                                    swal({title: 'Deleted', type: 'success', timer: 2000});
+                                    $scope.load();
+                                })
+                                .error(function (xhr) {
+                                    var msg = API.error(xhr);
+                                    swal(msg.title, msg.message, 'error');
+                                });
+                    });
         };
 
         // Save to server
@@ -205,11 +227,14 @@
 
             API.call({url: save_url.url, method: save_url.method, data: $.param(data)})
                     .success(function (data, status) {
-                        layer.closeAll();
-                        layer.msg('Successfully');
+                        dialogForm.modal('hide');
+                        swal({title: 'Successfully', type: 'success', timer: 2000});
                         $scope.load();
                     })
-                    .error(API.error);
+                    .error(function (xhr) {
+                        var msg = API.error(xhr);
+                        swal(msg.title, msg.message, 'error');
+                    });
         };
     });
 </script>

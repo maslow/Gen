@@ -36,13 +36,11 @@ var Identity = {
 
 var API = {
     call: function (options) {
-        layer.load(1);
         var complete = options.complete;
         options.complete = function (xhr) {
             if (complete != undefined || complete != null) {
                 complete(xhr);
             }
-            layer.closeAll('loading');
         };
 
         options.url = this.url(options.url);
@@ -57,10 +55,11 @@ var API = {
     },
     error: function (xhr) {
         var message = 'Error';
+        var title = xhr.statusText;
         //noinspection JSUnresolvedVariable
         var res = xhr.responseJSON;
         if (xhr.status == 403) {
-            message = res.name;
+            message = res.message;
         } else if (xhr.status == 401) {
             Identity.clear();
             Identity.loginRequired();
@@ -73,7 +72,7 @@ var API = {
         } else if (xhr.status == 406) {
             message = res.message;
         }
-        layer.msg(message, {shift: 6});
+        return {title: title, message: message};
     },
 
     url: function (url) {
@@ -95,7 +94,3 @@ var Debug = {
         console.log(message);
     }
 };
-
-layer.config({
-    offset: '50px'
-});

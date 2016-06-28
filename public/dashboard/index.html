@@ -21,7 +21,6 @@
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- AdminLTE JS File -->
     <script src="node_modules/admin-lte/dist/js/app.min.js"></script>
-    <script src="vendor/bower/layer/layer.js"></script>
     <!-- App JS Files -->
     <script src="lib.js"></script>
 
@@ -144,9 +143,7 @@
 
 <script>
     Identity.loginRequired();
-    layer.config({
-        offset: '150px'
-    });
+
     var app = angular.module('gen', []);
     app.controller('MainCtrl', function ($scope, $http) {
         var uid = Identity.getUserId();

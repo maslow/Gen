@@ -8,11 +8,19 @@
     <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css"/>
     <!-- Twitter Bootstrap 3 CSS File -->
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <!-- Sweetalert CSS File -->
+    <link rel="stylesheet" href="../node_modules/sweetalert/dist/sweetalert.css"/>
+
 
     <!-- jQuery JS File -->
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <!-- Ng JS File -->
     <script src="../node_modules/angular/angular.min.js"></script>
-    <script src="../vendor/bower/layer/layer.js"></script>
+    <!-- Sweetalert JS File -->
+    <script src="../node_modules/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Twitter Bootstrap JS File -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
     <script src="../node_modules/jquery-validation/dist/jquery.validate.js"></script>
 
     <script src="../lib.js"></script>
@@ -53,51 +61,66 @@
     </div>
 </div>
 
-<div id="form_dlg" style="padding: 30px;display:none">
-    <form class="form-horizontal" method="post" ng-submit="save()">
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Username</label>
+<div id="form_dlg" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Role</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" ng-submit="save()">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Username</label>
 
-            <div class="col-sm-8">
-                <input name="username" ng-model="form.username" type="text" class="form-control"
-                       minlength="3" ng-readonly="!isCreate" ng-required="isCreate"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-8">
+                            <input name="username" ng-model="form.username" type="text" class="form-control"
+                                   minlength="3" ng-readonly="!isCreate" ng-required="isCreate"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
 
-            <div class="col-sm-8">
-                <input id="password" name="password" ng-model="form.password" type="password" class="form-control"
-                       minlength="6" ng-required="isCreate"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Confirm Password</label>
+                        <div class="col-sm-8">
+                            <input id="password" name="password" ng-model="form.password" type="password"
+                                   class="form-control"
+                                   minlength="6" ng-required="isCreate"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Confirm Password</label>
 
-            <div class="col-sm-8">
-                <input name="password2" ng-model="form.password2" type="password" class="form-control"
-                       minlength="6" equalTo="#password" ng-required="isCreate"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Roles</label>
+                        <div class="col-sm-8">
+                            <input name="password2" ng-model="form.password2" type="password" class="form-control"
+                                   minlength="6" equalTo="#password" ng-required="isCreate"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Roles</label>
 
-            <div class="col-sm-8">
-                <div class="checkbox" ng-repeat="role in roles">
-                    <label>
-                        <input type="radio" name="role" value="{{role.name}}"
-                               ng-checked="role.name == form.role.name"/>
-                        <span ng-bind="role.description"></span>
-                    </label>
-                </div>
+                        <div class="col-sm-8">
+                            <div class="checkbox" ng-repeat="role in roles">
+                                <label>
+                                    <input type="radio" name="role" value="{{role.name}}"
+                                           ng-checked="role.name == form.role.name"/>
+                                    <span ng-bind="role.description"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-8">
+                            <input type="submit" class="btn btn-default"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-8">
-                <input type="submit" class="btn btn-default"/>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
@@ -106,6 +129,8 @@
     var app = angular.module('admin', []);
 
     app.controller('AdminCtrl', function ($scope, $http) {
+        var dialogForm = $("#form_dlg");
+
         var save_url = {
             url: '',
             method: ''
@@ -134,10 +159,8 @@
             $scope.form.password2 = '';
             $scope.isCreate = true;
 
-            layer.open({
-                title: 'Create', type: 1, skin: 'layui-layer-rim', area: ['500px', '500px'], shadeClose: true,
-                content: $("#form_dlg")
-            });
+            dialogForm.modal();
+
             save_url = {
                 url: '/administrators',
                 method: 'post'
@@ -147,12 +170,12 @@
         // Update Data
         $scope.update = function (o) {
             $scope.form = o;
+            $scope.form.password = '';
+            $scope.form.password2 = '';
+
             $scope.isCreate = false;
 
-            layer.open({
-                title: 'Update', type: 1, skin: 'layui-layer-rim', area: ['500px', '500px'], shadeClose: true,
-                content: $("#form_dlg")
-            });
+            dialogForm.modal();
 
             save_url = {
                 url: '/administrators/' + o.uid,
@@ -162,32 +185,50 @@
 
         // Remove Data
         $scope.remove = function (o) {
-            layer.confirm('Are you sure to delete this?', function () {
-                layer.closeAll();
-                API.call({url: '/administrators/' + o.uid, method: 'delete'})
-                        .success(function () {
-                            layer.msg('Successfully');
-                            $scope.load();
-                        })
-                        .error(API.error);
-            });
+            swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover it!",
+                        type: "warning", showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, delete it!",
+                        closeOnConfirm: false,
+                        showLoaderOnConfirm: true
+                    },
+                    function () {
+                        API.call({url: '/administrators/' + o.uid, method: 'delete'})
+                                .success(function () {
+                                    swal({title: 'Deleted', type: 'success', timer: 2000});
+                                    $scope.load();
+                                })
+                                .error(function (xhr) {
+                                    var msg = API.error(xhr);
+                                    swal(msg.title, msg.message, 'error');
+                                });
+                    });
         };
 
         // Save to server
         $scope.save = function () {
             if ($scope.form.password != $scope.form.password2) {
-                layer.msg('The confirm password must equal to password', {shift: 6});
-                $scope.form.password = '';
-                $scope.form.password2 = '';
+                swal({
+                    title: 'Password Invalid',
+                    text: 'The confirm password must equal to password',
+                    type: 'error',
+                    timer: 2000
+                });
+
                 return false;
             }
-            API.call({url: save_url.url, method: save_url.method, data: $("#form_dlg form").serialize()})
+            API.call({url: save_url.url, method: save_url.method, data: $('#form_dlg form').serialize()})
                     .success(function (data, status) {
-                        layer.closeAll();
-                        layer.msg('Successfully');
+                        dialogForm.modal('hide');
+                        swal({title: 'Successfully', type: 'success', timer: 2000});
                         $scope.load();
                     })
-                    .error(API.error);
+                    .error(function (xhr) {
+                        var msg = API.error(xhr);
+                        swal(msg.title, msg.message, 'error');
+                    });
             return false;
         };
     });

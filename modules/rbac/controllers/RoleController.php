@@ -131,7 +131,7 @@ class RoleController extends Controller
                     throw new ServerErrorHttpException($e->getMessage(), $e->getCode());
                 }
             } else {
-                throw new NotAcceptableHttpException('The role cannot be deleted unless there are no assignments with it');
+                throw new NotAcceptableHttpException('The role cannot be deleted unless no assignments with it');
             }
 
             \Yii::$app->response->setStatusCode(204);

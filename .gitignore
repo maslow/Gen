@@ -28,9 +28,10 @@ phpunit.phar
 
 public/api/index.php
 
+public/api/assets
+
 config/db.php
 
 config/modules.php
 
 node_modules
-.git
