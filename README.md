@@ -100,14 +100,14 @@ npm install
 
 ```command
 cd public/dashboard
-npm install bower -g
 npm install 
-bower install 
 ```
 
-Web URL:  http://localhost/gen/public/web
-Dashboard URL:  http://localhost/gen/public/dashboard
-API URL:  http://localhost/gen/public/api
+Web URL:  http://localhost/public/web
+
+Dashboard URL:  http://localhost/public/dashboard
+
+API URL:  http://localhost/public/api
 
   
  
